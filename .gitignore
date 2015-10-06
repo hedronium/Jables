@@ -1,2 +1,4 @@
 /vendor/
 .fuse*
+.subl*
+composer.lock

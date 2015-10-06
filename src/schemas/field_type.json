@@ -1,0 +1,28 @@
+{
+	"type": {
+		"type": "string",
+		"enum": [
+			"big-integer",
+			"binary",
+			"boolean",
+			"char",
+			"date-time",
+			"date",
+			"decimal",
+			"double",
+			"enum",
+			"float",
+			"integer",
+			"json",
+			"jsonb",
+			"long-text",
+			"medium-integer",
+			"medium-text",
+			"morphs",
+			"small-integer",
+			"string",
+			"text",
+			"tiny-integer"
+		]
+	}
+}

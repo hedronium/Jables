@@ -11,22 +11,29 @@ class JablesCheck extends Command
 		$this->info('Checking for Structural Errors...');
 		$errors = $this->jables->structuralError();
 
-		if ($errors === null) {
-			$this->info('Checking for Schematic Errors...');
-			$errors = $this->jables->schematicError();
-		} else {
-			$this->error($error);
+		if ($errors !== null) {
+			$this->error($errors);
+			return;
 		}
 
-		if ($errors === null) {
-			$this->info('Checking for Refferential Errors...');
-			$errors = $this->jables->refferentialError();
+		$this->info('Checking for Schematic Errors...');
+		$errors = $this->jables->schematicError();
 
-			if ($errors === null) {
-				$this->info('Looks OK.');
-			}
-		} else {
+		if ($errors !== null) {
 			$this->error(print_r($errors, true));
+			return;
 		}
+
+		$this->info('Checking for Refferential Errors...');
+		$errors = $this->jables->refferentialError();
+
+		if ($errors !== null) {
+			$this->error(print_r($errors, true));
+			return;
+		}
+		
+		$this->info('--------------------------');
+		$this->info('Looks OK! :D');
+		$this->info('--------------------------');
 	}
 }

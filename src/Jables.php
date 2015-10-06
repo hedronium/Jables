@@ -70,28 +70,23 @@ class Jables
 	public function schematicError()
 	{
 		$errors = [];
-		$table_schema = $this->fs->get(__DIR__.'/schemas/table.json');
-		$table_schema = json_decode($table_schema);
 
-		$validator = new \JsonSchema\Validator();
+		$retriever = new \JsonSchema\Uri\UriRetriever;
+		$validator = new \JsonSchema\Validator;
+		$refResolver = new \JsonSchema\RefResolver($retriever);
+
+
+		$resolve_path = 'file://'.__DIR__.'/schemas/';
+
+		$table_schema = $retriever->retrieve('file://'.__DIR__.'/schemas/table.json');
+		$refResolver->resolve($table_schema, $resolve_path);
 
 		foreach ($this->files as $i => $file) {
 			$table_data = json_decode($this->fs->get($file));
 			$validator->check($table_data, $table_schema);
 
-			if ($validator->isValid()) {
-				$fields = $table_data->fields;
-
-				// foreach ($fields as $field) {
-				// 	$schema_file = $field->type;
-				// 	$column_schema = $this->fs->get(__DIR__.'/schemas/'.$schema_file.'.json');
-				// 	$column_schema = json_decode($column_schema);
-				// }
-
-			} else {
+			if (!$validator->isValid()) {
 				foreach ($validator->getErrors() as $error) {
-					var_dump($file);
-					print_r($table_data);
 					$errors[] = [
 						'table' => $this->fs->name($file),
 						'proterty' => $error['property'],
@@ -99,14 +94,43 @@ class Jables
 					];
 				}
 
-				break;	
+				return $errors;
+			}
+
+			$fields = $table_data->fields;
+
+			foreach ($fields as $name => $field) {
+				if ($name === 'timestamps') {
+					continue;
+				}
+
+				$schema_file = $field->type.'.json';
+
+				$field_schema = $retriever->retrieve('file://'.__DIR__.'/schemas/'.$schema_file);
+				$refResolver->resolve($field_schema, $resolve_path);
+
+				$field_data = $field;
+				$validator->check($field_data, $field_schema);
+
+				if (!$validator->isValid()) {
+					foreach ($validator->getErrors() as $error) {
+						$errors[] = [
+							'table' => $this->fs->name($file),
+							'proterty' => $error['property'],
+							'message' => $error['message']
+						];
+					}
+
+					return $errors;
+				}
 			}
 		}
 
-		if (count($errors)) {
-			return $errors;
-		}
+		return null;
+	}
 
+	public function refferentialError()
+	{
 		return null;
 	}
 }

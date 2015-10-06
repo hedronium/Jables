@@ -1,0 +1,53 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"fields": {
+			"type": "object",
+			"patternProperties": {
+				"^timestamps$": {
+					"type": "boolean"
+				},
+				"^(?!timestamps).*$": {
+					"type": "object",
+					"properties": {
+						"type": {"$ref": "field_type.json#/type"}
+					},
+					"required": ["type"]
+				}
+			},
+			"minProperties": 1
+		},
+		"foreign": {
+			"type": "object",
+			"patternProperties": {
+				"^.*$": {
+					"type": "string",
+					"pattern": "^.*\\..*$"
+				}
+			},
+			"minProperties": 1
+		},
+		"unique": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"minItems": 2
+			},
+			"minItems": 1
+		},
+		"primary": {
+			"type": "array",
+			"minItems": 2
+		},
+		"timestamps": {
+			"type": "boolean"
+		}
+	},
+	"required": ["fields"]
+}
