@@ -1,0 +1,20 @@
+{
+	"name": "hedronium/jables",
+	"description": "Store database Schema in Version control the clean way",
+	"require": {
+		"seld/jsonlint": "^1.3",
+		"justinrainbow/json-schema": "~1.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"hedronium\\Jables\\": "src/"
+		}
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Omran Jamal",
+			"email": "o.jamal97@gmail.com"
+		}
+	]
+}
