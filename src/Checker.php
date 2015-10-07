@@ -21,6 +21,19 @@ class Checker
 	protected $schemas = [];
 	protected $datas = [];
 
+	protected $refference_checks = [
+		'integer' => ['attributes'],
+		'big-integer' => 'integer',
+		'medium-integer' => 'integer',
+		'small-integer' => 'integer',
+		'tiny-integer' => 'integer',
+		'string' => ['length'],
+		'char'   => 'string',
+		'decimal' => ['digits', 'prescision'],
+		'double' => 'decimal',
+		'enum' => ['values']
+	];
+
 	protected function buildFileList()
 	{
 		$files = $this->fs->files('database/jables');
@@ -81,6 +94,23 @@ class Checker
 		$this->schemas[$file] = $schema;
 
 		return $schema;
+	}
+
+	protected function getName($file, $ext = false)
+	{
+		if (isset($this->names[$file])) {
+			return $this->names[$file];
+		}
+
+		$name = $this->fs->name($file);
+
+		if ($ext) {
+			$name .= '.json';
+		}
+
+		$this->names[$file] = $name;
+
+		return $name;
 	}
 
 	public function structuralError()
@@ -209,8 +239,83 @@ class Checker
 		return null;
 	}
 
+	public function resolveRefferencechecks()
+	{
+		$checks = &$this->refference_checks;
+
+		foreach ($checks as &$check) {
+			if (is_string($check)) {
+				$check = $checks[$check];
+			} else {
+				array_push($check, 'type');
+			}
+		}
+	}
+
 	public function refferentialError()
 	{
-		return null;
+		$this->resolveRefferencechecks();
+
+		$fields = [];
+		$foreigns = [];
+
+		foreach ($this->datas as $file => $table) {
+			$table_name = $this->getName($file);
+
+			foreach ($table->fields as $field_name => $field) {
+				$fields[$table_name.'.'.$field_name] = $field;
+
+				if (isset($field->foreign)) {
+					$foreigns[$table_name.'.'.$field_name] = $field->foreign;
+				}
+			}
+
+			if (isset($table->foreign)) {
+				$table_foreigns = (array) $table->foreign;
+				$table_new_foreigns = [];
+
+				foreach ($table_foreigns as $field=>$parent) {
+					if (!isset($table->fields->$field)) {
+						return "The field $field does not exist in table $table_name";
+					}
+
+					$table_new_foreigns[$table_name.'.'.$field] = $parent;
+				}
+
+				$foreigns = array_merge(
+					$foreigns,
+					$table_new_foreigns
+				);
+			}
+		}
+
+		foreach ($foreigns as $child=>$parent) {
+			if (!isset($fields[$parent])) {
+				return "$parent does not exist, in $child";
+			}
+
+
+			$fields[$child];
+
+			if (isset($this->refference_checks[$fields[$child]->type])) {
+				$checks = $this->refference_checks[$fields[$child]->type];
+			} else {
+				$checks = ['type'];
+			}
+
+			foreach ($checks as $check) {
+				if (!(isset($fields[$child]->$check) && isset($fields[$parent]->$check))) {
+					return "The fields definitions $child & $parent don't match. ($check missing)";
+				}
+
+				if (is_array($fields[$child]->$check) && is_array($fields[$parent]->$check)) {
+					if (!empty(array_diff($fields[$child]->$check, $fields[$parent]->$check)) || !empty(array_diff($fields[$parent]->$check, $fields[$child]->$check))) {
+						return "The fields definitions $child & $parent don't match. ($check)";
+					}
+				} elseif ($fields[$child]->$check !== $fields[$parent]->$check) {
+					return "The fields definitions $child & $parent don't match. ($check)";
+				}
+			}
+		}
 	}
 }
