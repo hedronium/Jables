@@ -1,15 +1,25 @@
 <?php
 namespace hedronium\Jables\commands;
 
-class JablesCheck extends Command
+use \hedronium\Jables\Checker;
+
+class Check extends Command
 {
 	protected $signature = 'jables:check';
 	protected $description = 'Checks the Schema files for inconsistencies.';
 
+	protected $checker = null;
+
+	public function __construct(Checker $checker)
+	{
+		parent::__construct();
+		$this->checker = $checker;
+	}
+
 	public function handle()
 	{
 		$this->info('Checking for Structural Errors...');
-		$errors = $this->jables->structuralError();
+		$errors = $this->checker->structuralError();
 
 		if ($errors !== null) {
 			$this->error($errors);
@@ -17,7 +27,7 @@ class JablesCheck extends Command
 		}
 
 		$this->info('Checking for Schematic Errors...');
-		$errors = $this->jables->schematicError();
+		$errors = $this->checker->schematicError();
 
 		if ($errors !== null) {
 			$this->error(print_r($errors, true));
@@ -25,7 +35,7 @@ class JablesCheck extends Command
 		}
 
 		$this->info('Checking for Refferential Errors...');
-		$errors = $this->jables->refferentialError();
+		$errors = $this->checker->refferentialError();
 
 		if ($errors !== null) {
 			$this->error(print_r($errors, true));

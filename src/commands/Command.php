@@ -5,12 +5,8 @@ use Illuminate\Console\Command as LaravelCommand;
 use hedronium\Jables\Jables;
 
 class Command extends LaravelCommand {
-	protected $jables = null;
-
-	public function __construct($jables)
+	public function __construct()
 	{
 		parent::__construct();
-
-		$this->jables = $jables;
 	}
 }

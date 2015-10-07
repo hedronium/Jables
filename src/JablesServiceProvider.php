@@ -5,51 +5,67 @@ use Illuminate\Support\ServiceProvider;
 
 class JablesServiceProvider extends ServiceProvider
 {
+	public $defer = true;
+
 	public function register()
 	{
-		$this->app->singleton('jables', function($app){
-			return new Jables($app, $app['files'], $app['db']);
+		$this->app->singleton('jables.checker', function($app){
+			return new Checker($app['files'], $app['db']);
 		});
 
-		$this->app['jables-command'] = $this->app->share(function($app){
-			return new commands\Jables($app['jables']);
+		$this->app['jables.commands.jables'] = $this->app->share(function($app){
+			return new commands\Jables();
 		});
 
-		$this->app['jables-check'] = $this->app->share(function($app){
-			return new commands\JablesCheck($app['jables']);
+		$this->app['jables.commands.check'] = $this->app->share(function($app){
+			return new commands\Check($app['jables.checker']);
 		});
 
-		$this->app['jables-refresh'] = $this->app->share(function($app){
-			return new commands\JablesRefresh($app['jables']);
+		$this->app['jables.commands.refresh'] = $this->app->share(function($app){
+			return new commands\Refresh();
 		});
 
-		$this->app['jables-down'] = $this->app->share(function($app){
-			return new commands\JablesDown($app['jables']);
+		$this->app['jables.commands.down'] = $this->app->share(function($app){
+			return new commands\Down();
 		});
 
-		$this->app['jables-diff'] = $this->app->share(function($app){
-			return new commands\JablesDiff($app['jables']);
+		$this->app['jables.commands.diff'] = $this->app->share(function($app){
+			return new commands\Diff();
 		});
 
-		$this->app['jables-create-table'] = $this->app->share(function($app){
-			return new commands\JablesCreateTable($app['jables']);
+		$this->app['jables.commands.create-table'] = $this->app->share(function($app){
+			return new commands\CreateTable();
 		});
 
-		$this->app['jables-prettify'] = $this->app->share(function($app){
-			return new commands\JablesPrettify($app['jables']);
+		$this->app['jables.commands.prettify'] = $this->app->share(function($app){
+			return new commands\Prettify();
 		});
 	}
 
 	public function boot()
 	{
 		$this->commands([
-			'jables-command',
-			'jables-check',
-			'jables-refresh',
-			'jables-down',
-			'jables-diff',
-			'jables-create-table',
-			'jables-prettify',
+			'jables.commands.jables',
+			'jables.commands.check',
+			'jables.commands.refresh',
+			'jables.commands.down',
+			'jables.commands.diff',
+			'jables.commands.create-table',
+			'jables.commands.prettify',
 		]);
+	}
+
+	public function provides()
+	{
+		return [
+			'jables.checker',
+			'jables.commands.jables',
+			'jables.commands.check',
+			'jables.commands.refresh',
+			'jables.commands.down',
+			'jables.commands.diff',
+			'jables.commands.create-table',
+			'jables.commands.prettify'
+		];
 	}
 }
