@@ -13,8 +13,12 @@ class JablesServiceProvider extends ServiceProvider
 			return new Checker($app['files']);
 		});
 
+		$this->app->singleton('jables.runner', function($app){
+			return new Runner($app['files'], $app['db']);
+		});
+
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
-			return new commands\Jables();
+			return new commands\Jables($app['jables.runner']);
 		});
 
 		$this->app['jables.commands.check'] = $this->app->share(function($app){
@@ -58,6 +62,7 @@ class JablesServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
+			'jables.runner',
 			'jables.checker',
 			'jables.commands.jables',
 			'jables.commands.check',

@@ -1,14 +1,12 @@
 <?php
 namespace hedronium\Jables;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Filesystem\Filesystem;
 use Seld\JsonLint\JsonParser;
 
 class Checker
 {
 	protected $fs = null;
-	protected $app = null;
 
 	protected $parser = null;
 

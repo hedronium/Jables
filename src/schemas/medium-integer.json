@@ -1,1 +1,18 @@
-{"$ref":"integer.json#"}
+{
+	"$schema": "http://json-schema.org/schema#",
+	"allOf": [
+		{"$ref":"base_field.json#"},
+		{
+			"properties": {
+				"attributes": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": ["unsigned"]
+					},
+					"uniqueItems": true
+				}
+			}
+		}
+	]
+}

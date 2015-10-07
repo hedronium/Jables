@@ -1,1 +1,9 @@
-{"$ref": "string.json#"}
+{
+	"$schema": "http://json-schema.org/schema#",
+	"allOf": [
+		{ "$ref": "string.json#" },
+		{
+			"required": ["length"]
+		}
+	]
+}
