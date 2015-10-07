@@ -16,6 +16,8 @@ class Checker
 
 	protected $files = [];
 
+	protected $schemas = [];
+
 	protected function buildFileList()
 	{
 		$files = $this->fs->files('database/jables');
@@ -41,6 +43,26 @@ class Checker
 		$this->schema_validator = new \JsonSchema\Validator;
 
 		$this->buildFileList();
+	}
+
+	protected function loadSchema($file)
+	{
+		if (isset($this->schemas[$file])) {
+			return $this->schemas[$file];
+		}
+
+		$retriever = $this->schema_retriever;
+		$refResolver = $this->schema_resolver;
+
+
+		$resolve_path = 'file://'.__DIR__.'/schemas/';
+
+		$schema = $retriever->retrieve('file://'.__DIR__.'/schemas/'.$file);
+		$refResolver->resolve($schema, $resolve_path);
+
+		$this->schemas[$file] = $schema;
+
+		return $schema;
 	}
 
 	public function structuralError()
@@ -102,12 +124,7 @@ class Checker
 	{
 		$errors = [];
 
-		$retriever = $this->schema_retriever;
 		$validator = $this->schema_validator;
-		$refResolver = $this->schema_resolver;
-
-
-		$resolve_path = 'file://'.__DIR__.'/schemas/';
 
 		$fields = $table_data->fields;
 
@@ -118,8 +135,7 @@ class Checker
 
 			$schema_file = $field->type.'.json';
 
-			$field_schema = $retriever->retrieve('file://'.__DIR__.'/schemas/'.$schema_file);
-			$refResolver->resolve($field_schema, $resolve_path);
+			$field_schema = $this->loadSchema($schema_file);
 
 			$field_data = $field;
 			$validator->check($field_data, $field_schema);
@@ -148,15 +164,9 @@ class Checker
 	{
 		$errors = [];
 
-		$retriever = $this->schema_retriever;
 		$validator = $this->schema_validator;
-		$refResolver = $this->schema_resolver;
 
-
-		$resolve_path = 'file://'.__DIR__.'/schemas/';
-
-		$table_schema = $retriever->retrieve('file://'.__DIR__.'/schemas/table.json');
-		$refResolver->resolve($table_schema, $resolve_path);
+		$table_schema = $this->loadSchema('table.json');
 
 		foreach ($this->files as $i => $file) {
 			$table_name = $this->fs->name($file);
