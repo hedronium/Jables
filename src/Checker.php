@@ -10,6 +10,8 @@ class Checker
 	protected $fs = null;
 	protected $app = null;
 
+	protected $parser = null;
+
 	protected $schema_retriever = null;
 	protected $schema_validator = null;
 	protected $schema_resolver = null;
@@ -17,6 +19,7 @@ class Checker
 	protected $files = [];
 
 	protected $schemas = [];
+	protected $datas = [];
 
 	protected function buildFileList()
 	{
@@ -38,11 +41,26 @@ class Checker
 	{
 		$this->fs = $fs;
 
+		$this->parser = new JsonParser();
 		$this->schema_retriever = new \JsonSchema\Uri\UriRetriever;
 		$this->schema_resolver = new \JsonSchema\RefResolver($this->schema_retriever);
 		$this->schema_validator = new \JsonSchema\Validator;
 
 		$this->buildFileList();
+	}
+
+	protected function loadData($file)
+	{
+		$parser = $this->parser;
+
+		if (isset($this->datas[$file])) {
+			return $this->datas[$file];
+		}
+
+		$data = $parser->parse($this->fs->get($file));
+		$this->datas[$file] = $data;
+
+		return $data;
 	}
 
 	protected function loadSchema($file)
@@ -67,11 +85,9 @@ class Checker
 
 	public function structuralError()
 	{
-		$parser = new JsonParser();
-
 		foreach ($this->files as $i => $file) {
 			try {
-				$parser->parse($this->fs->get($file));
+				$this->loadData($file);
 			} catch (\Exception $e) {
 				$message = $this->fs->name($file).'.json, '.$e->getMessage();
 
@@ -170,7 +186,7 @@ class Checker
 
 		foreach ($this->files as $i => $file) {
 			$table_name = $this->fs->name($file);
-			$table_data = json_decode($this->fs->get($file));
+			$table_data = $this->loadData($file);
 			$validator->check($table_data, $table_schema);
 
 			if (!$validator->isValid()) {
