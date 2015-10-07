@@ -33,7 +33,7 @@
 				"string",
 				"number",
 				"array",
-				"onject",
+				"object",
 				"boolean",
 				"null"
 			]

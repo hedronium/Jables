@@ -22,7 +22,8 @@
 			"small-integer",
 			"string",
 			"text",
-			"tiny-integer"
+			"tiny-integer",
+			"timestamp"
 		]
 	}
 }
