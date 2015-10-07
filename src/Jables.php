@@ -82,13 +82,14 @@ class Jables
 		$refResolver->resolve($table_schema, $resolve_path);
 
 		foreach ($this->files as $i => $file) {
+			$table_name = $this->fs->name($file);
 			$table_data = json_decode($this->fs->get($file));
 			$validator->check($table_data, $table_schema);
 
 			if (!$validator->isValid()) {
 				foreach ($validator->getErrors() as $error) {
 					$errors[] = [
-						'table' => $this->fs->name($file),
+						'table' => $table_name,
 						'proterty' => $error['property'],
 						'message' => $error['message']
 					];
@@ -115,12 +116,43 @@ class Jables
 				if (!$validator->isValid()) {
 					foreach ($validator->getErrors() as $error) {
 						$errors[] = [
-							'table' => $this->fs->name($file),
+							'table' => $table_name,
 							'proterty' => $error['property'],
 							'message' => $error['message']
 						];
 					}
 
+					return $errors;
+				}
+
+				if (!isset($field_schema->allOf)) {
+					continue;
+				}
+
+				$permitted = [];
+				$available = [];
+
+				foreach($field_schema->allOf as $subschema) {
+					foreach($subschema->properties as $attr_name => $property) {
+						$permitted[] = $attr_name;
+					}
+				}
+
+				foreach($field_data as $attr_name => $value) {
+					$available[] = $attr_name;
+				}
+
+				$diff = array_diff($available, $permitted);
+
+				foreach ($diff as $property) {
+					$errors[] = [
+						'table' => $table_name,
+						'property' => "$table_name.fields.$name",
+						'message' => "The property - $property - is not defined and the definition does not allow additional properties"
+					];
+				}
+
+				if (count($diff)) {
 					return $errors;
 				}
 			}
