@@ -9,16 +9,12 @@ class Checker
 {
 	protected $fs = null;
 	protected $app = null;
-	protected $db = null;
 
 	protected $schema_retriever = null;
 	protected $schema_validator = null;
 	protected $schema_resolver = null;
 
 	protected $files = [];
-
-	protected $tables = [];
-	protected $tables_ex = [];
 
 	protected function buildFileList()
 	{
@@ -36,25 +32,15 @@ class Checker
 		return $this->files;
 	}
 
-	public function __construct (Filesystem $fs, DatabaseManager $db)
+	public function __construct (Filesystem $fs)
 	{
 		$this->fs = $fs;
-		$this->db = $db;
 
 		$this->schema_retriever = new \JsonSchema\Uri\UriRetriever;
 		$this->schema_resolver = new \JsonSchema\RefResolver($this->schema_retriever);
 		$this->schema_validator = new \JsonSchema\Validator;
 
 		$this->buildFileList();
-	}
-
-	protected function errorLess()
-	{
-		if(!$this->structuralError() && !$this->schematicError() && !$this->refferentialError()){
-			return false;
-		}
-
-		return true;
 	}
 
 	public function structuralError()

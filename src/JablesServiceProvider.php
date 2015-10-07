@@ -10,7 +10,7 @@ class JablesServiceProvider extends ServiceProvider
 	public function register()
 	{
 		$this->app->singleton('jables.checker', function($app){
-			return new Checker($app['files'], $app['db']);
+			return new Checker($app['files']);
 		});
 
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
