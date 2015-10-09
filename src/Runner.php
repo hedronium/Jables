@@ -53,6 +53,8 @@ class Runner
 		$builder->create($table, function(Blueprint $table){
 			$table->increments('id');
 			$table->longText('data');
+
+			$table->timestamps();
 		});
 
 		return true;
@@ -191,7 +193,7 @@ class Runner
 					$table->timestamps();
 				} else {
 					$this->field($table, $name, $field);
-					
+
 					if (isset($field->foreign)) {
 						$this->foreigns[$table_name][$name] = $field->foreign;
 					}
@@ -237,8 +239,8 @@ class Runner
 
 		}
 
-		$this->db
-			->table(config('jables.table'))
-			->insert(['data'=>json_encode($this->tables)]);
+		$log = new JablesTableModel();
+		$log->data = json_encode($this->tables);
+		$log->save();
 	}
 }
