@@ -34,7 +34,12 @@ class JablesServiceProvider extends ServiceProvider
 		});
 
 		$this->app['jables.commands.refresh'] = $this->app->share(function($app){
-			return new commands\Refresh();
+			return new commands\Refresh(
+				$app,
+				$app['jables.checker'],
+				$app['jables.destroyer'],
+				$app['jables.runner']
+			);
 		});
 
 		$this->app['jables.commands.destroy'] = $this->app->share(function($app){
@@ -65,9 +70,9 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.check',
 			'jables.commands.refresh',
 			'jables.commands.destroy',
-			'jables.commands.diff',
+			// 'jables.commands.diff',
 			'jables.commands.create-table',
-			'jables.commands.prettify',
+			// 'jables.commands.prettify',
 		]);
 	}
 

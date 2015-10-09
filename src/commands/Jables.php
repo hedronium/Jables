@@ -8,6 +8,7 @@ class Jables extends Command
 {
 	use Checks;
 	use CreatesTable;
+	use Creates;
 
 	protected $signature = 'jables {--database=}';
 	protected $description = 'Creates database tables from jable schema.';
@@ -25,22 +26,9 @@ class Jables extends Command
 	public function handle()
 	{
 		if (!$this->check()) {
-			return;
+			return false;
 		}
-
-		$database = $this->option('database');
-		$this->runner->connection($database);
-
-		if (!$this->createTable()) {
-			return;
-		}
-
-		$this->info('Creating Database Tables...');
-		$this->runner->up();
-
-		$this->info('Creating foreign Key Constraints...');
-		$this->runner->foreigns();
-
-		$this->info('DONE.');
+		
+		$this->create();
 	}
 }
