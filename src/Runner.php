@@ -168,8 +168,6 @@ class Runner
 			$builder->table($table, function($table) use ($foreigns, $table_name) {
 				
 				foreach ($foreigns as $field => $foreign) {
-
-					echo ' - '.$table_name.'.'.$field.' --> '.$foreign.PHP_EOL;
 					
 					list($foreign_table, $foreign_field) = explode('.', $foreign);
 					$table->foreign($field)->references($foreign_field)->on($foreign_table);
@@ -187,8 +185,6 @@ class Runner
 			
 			foreach ($definition->fields as $name=>$field) {
 				
-				echo ' - '.$name;
-				
 				if ($name === 'timestamps') {
 					$table->timestamps();
 				} else {
@@ -198,10 +194,7 @@ class Runner
 						$this->foreigns[$table_name][$name] = $field->foreign;
 					}
 
-					echo ' ('.$field->type.')';
 				}
-
-				echo PHP_EOL;
 
 			}
 
@@ -216,8 +209,6 @@ class Runner
 		foreach ($this->tables as $name => $definition) {
 
 			$builder = $this->db->getSchemaBuilder();
-
-			echo PHP_EOL.'# '.$name.PHP_EOL;
 
 			$this->foreigns[$name] = [];
 
@@ -240,6 +231,7 @@ class Runner
 		}
 
 		$log = new JablesTableModel();
+		$log->setConnection($this->db->getName());
 		$log->data = json_encode($this->tables);
 		$log->save();
 	}

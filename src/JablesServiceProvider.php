@@ -21,6 +21,10 @@ class JablesServiceProvider extends ServiceProvider
 			return new Runner($app, $app['files'], $app['db']);
 		});
 
+		$this->app->singleton('jables.destroyer', function($app){
+			return new Destroyer($app, $app['db']);
+		});
+
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
 			return new commands\Jables($app['jables.runner'], $app['jables.checker']);
 		});
@@ -33,8 +37,8 @@ class JablesServiceProvider extends ServiceProvider
 			return new commands\Refresh();
 		});
 
-		$this->app['jables.commands.down'] = $this->app->share(function($app){
-			return new commands\Down();
+		$this->app['jables.commands.destroy'] = $this->app->share(function($app){
+			return new commands\Destroy($app, $app['jables.destroyer']);
 		});
 
 		$this->app['jables.commands.diff'] = $this->app->share(function($app){
@@ -60,7 +64,7 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.jables',
 			'jables.commands.check',
 			'jables.commands.refresh',
-			'jables.commands.down',
+			'jables.commands.destroy',
 			'jables.commands.diff',
 			'jables.commands.create-table',
 			'jables.commands.prettify',
@@ -75,7 +79,7 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.jables',
 			'jables.commands.check',
 			'jables.commands.refresh',
-			'jables.commands.down',
+			'jables.commands.destroy',
 			'jables.commands.diff',
 			'jables.commands.create-table',
 			'jables.commands.prettify'
