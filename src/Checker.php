@@ -7,7 +7,7 @@ use Seld\JsonLint\JsonParser;
 class Checker
 {
 	protected $fs = null;
-
+	protected $app = null;
 	protected $parser = null;
 
 	protected $schema_retriever = null;
@@ -34,7 +34,7 @@ class Checker
 
 	protected function buildFileList()
 	{
-		$files = $this->fs->files('database/jables');
+		$files = $this->fs->files($this->app->databasePath().'/'.config('jables.folder'));
 
 		foreach ($files as $file) {
 			if ($this->fs->extension($file) == 'json') {
@@ -48,9 +48,10 @@ class Checker
 		return $this->files;
 	}
 
-	public function __construct (Filesystem $fs)
+	public function __construct ($app, Filesystem $fs)
 	{
 		$this->fs = $fs;
+		$this->app = $app;
 
 		$this->parser = new JsonParser();
 		$this->schema_retriever = new \JsonSchema\Uri\UriRetriever;

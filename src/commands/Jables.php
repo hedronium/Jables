@@ -7,11 +7,13 @@ use hedronium\Jables\Checker;
 class Jables extends Command
 {
 	use Checks;
+	use CreatesTable;
 
 	protected $signature = 'jables {--database=}';
 	protected $description = 'Creates database tables from jable schema.';
 
 	protected $runner = null;
+	protected $checker = null;
 
 	public function __construct(Runner $runner, Checker $checker)
 	{
@@ -28,6 +30,10 @@ class Jables extends Command
 
 		$database = $this->option('database');
 		$this->runner->connection($database);
+
+		if (!$this->createTable()) {
+			return;
+		}
 
 		$this->info('Creating Database Tables...');
 		$this->runner->up();

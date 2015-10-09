@@ -17,9 +17,11 @@ class Runner
 	protected $types = [];
 	protected $foreigns = [];
 
+	protected $app = null;
+
 	protected function buildTableList()
 	{
-		$files = $this->fs->files('database/jables');
+		$files = $this->fs->files($this->app->databasePath().'/'.config('jables.folder'));
 
 		foreach ($files as $file) {
 			if ($this->fs->extension($file) == 'json') {
@@ -28,13 +30,32 @@ class Runner
 		}
 	}
 
-	public function __construct(Filesystem $fs, DatabaseManager $db)
+	public function __construct($app, Filesystem $fs, DatabaseManager $db)
 	{
+		$this->app = $app;
 		$this->fs = $fs;
 		$this->db_manager = $db;
 		$this->parser = new JsonParser;
 
 		$this->buildTableList();
+	}
+
+	public function createTable()
+	{
+		$builder = $this->db->getSchemaBuilder();
+
+		$table = config('jables.table');
+
+		if ($builder->hasTable($table)) {
+			return null;
+		}
+
+		$builder->create($table, function(Blueprint $table){
+			$table->increments('id');
+			$table->longText('data');
+		});
+
+		return true;
 	}
 
 	public function connection($connection = null)
@@ -141,10 +162,12 @@ class Runner
 		$builder = $this->db->getSchemaBuilder();
 
 		foreach ($this->foreigns as $table => $foreigns) {
-
-			$builder->table($table, function($table) use ($foreigns) {
+			$table_name = $table;
+			$builder->table($table, function($table) use ($foreigns, $table_name) {
 				
 				foreach ($foreigns as $field => $foreign) {
+
+					echo ' - '.$table_name.'.'.$field.' --> '.$foreign.PHP_EOL;
 					
 					list($foreign_table, $foreign_field) = explode('.', $foreign);
 					$table->foreign($field)->references($foreign_field)->on($foreign_table);
@@ -163,17 +186,20 @@ class Runner
 			foreach ($definition->fields as $name=>$field) {
 				
 				echo ' - '.$name;
-				echo PHP_EOL;
-
+				
 				if ($name === 'timestamps') {
 					$table->timestamps();
 				} else {
 					$this->field($table, $name, $field);
+					
+					if (isset($field->foreign)) {
+						$this->foreigns[$table_name][$name] = $field->foreign;
+					}
+
+					echo ' ('.$field->type.')';
 				}
 
-				if (isset($field->foreign)) {
-					$this->foreigns[$table_name][$name] = $field->foreign;
-				}
+				echo PHP_EOL;
 
 			}
 
@@ -210,5 +236,9 @@ class Runner
 			});
 
 		}
+
+		$this->db
+			->table(config('jables.table'))
+			->insert(['data'=>json_encode($this->tables)]);
 	}
 }

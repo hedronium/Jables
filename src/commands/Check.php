@@ -11,6 +11,7 @@ class Check extends Command
 	protected $description = 'Checks the Schema files for inconsistencies.';
 
 	protected $app = null;
+	protected $checker = null;
 
 	public function __construct(Checker $checker)
 	{

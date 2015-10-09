@@ -9,12 +9,16 @@ class JablesServiceProvider extends ServiceProvider
 
 	public function register()
 	{
+		$this->mergeConfigFrom(
+			__DIR__.'/config/jables.php', 'jables'
+		);
+
 		$this->app->singleton('jables.checker', function($app){
-			return new Checker($app['files']);
+			return new Checker($app, $app['files']);
 		});
 
 		$this->app->singleton('jables.runner', function($app){
-			return new Runner($app['files'], $app['db']);
+			return new Runner($app, $app['files'], $app['db']);
 		});
 
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
@@ -38,7 +42,7 @@ class JablesServiceProvider extends ServiceProvider
 		});
 
 		$this->app['jables.commands.create-table'] = $this->app->share(function($app){
-			return new commands\CreateTable();
+			return new commands\CreateTable($app['jables.runner']);
 		});
 
 		$this->app['jables.commands.prettify'] = $this->app->share(function($app){
@@ -48,6 +52,10 @@ class JablesServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
+		$this->publishes([
+			__DIR__.'config/jables.php' => config_path('jables.php'),
+		]);
+
 		$this->commands([
 			'jables.commands.jables',
 			'jables.commands.check',

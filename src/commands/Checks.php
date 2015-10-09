@@ -2,8 +2,6 @@
 namespace hedronium\Jables\commands;
 
 trait Checks {
-	protected $checker = null;
-	
 	public function check()
 	{
 		$this->info('Checking for JSON syntax Errors...');
