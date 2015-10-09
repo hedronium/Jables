@@ -9,11 +9,13 @@ use Illuminate\Database\Schema\Blueprint;
 class Runner
 {
 	protected $fs = null;
+	protected $db_manager = null;
 	protected $db = null;
 	protected $parser = null;
 
 	protected $tables = [];
 	protected $types = [];
+	protected $foreigns = [];
 
 	protected function buildTableList()
 	{
@@ -26,12 +28,18 @@ class Runner
 		}
 	}
 
-	public function __construct(Filesystem $fs, DatabaseManager $db) {
+	public function __construct(Filesystem $fs, DatabaseManager $db)
+	{
 		$this->fs = $fs;
-		$this->db = $db->connection();
+		$this->db_manager = $db;
 		$this->parser = new JsonParser;
 
 		$this->buildTableList();
+	}
+
+	public function connection($connection = null)
+	{
+		$this->db = $this->db_manager->connection($connection);
 	}
 
 	protected function fieldTypeObject($type)
@@ -128,11 +136,33 @@ class Runner
 		$obj->base();
 	}
 
+	public function foreigns()
+	{
+		$builder = $this->db->getSchemaBuilder();
+
+		foreach ($this->foreigns as $table => $foreigns) {
+
+			$builder->table($table, function($table) use ($foreigns) {
+				
+				foreach ($foreigns as $field => $foreign) {
+					
+					list($foreign_table, $foreign_field) = explode('.', $foreign);
+					$table->foreign($field)->references($foreign_field)->on($foreign_table);
+				
+				}
+
+			});
+
+		}
+	}
+
 	public function up()
 	{
-		$creator = function(Blueprint $table, $definition){
+		$creator = function(Blueprint $table, $table_name, $definition, $uniques){
+			
 			foreach ($definition->fields as $name=>$field) {
-				echo $name;
+				
+				echo ' - '.$name;
 				echo PHP_EOL;
 
 				if ($name === 'timestamps') {
@@ -140,19 +170,45 @@ class Runner
 				} else {
 					$this->field($table, $name, $field);
 				}
+
+				if (isset($field->foreign)) {
+					$this->foreigns[$table_name][$name] = $field->foreign;
+				}
+
 			}
+
+			foreach ($uniques as $unique) {
+				$table->unique($unique);
+			}
+
 		};
 
 		$creator->bindTo($this);
 
 		foreach ($this->tables as $name => $definition) {
+
 			$builder = $this->db->getSchemaBuilder();
 
-			echo '-----------'.$name.PHP_EOL;
+			echo PHP_EOL.'# '.$name.PHP_EOL;
 
-			$builder->create($name, function(Blueprint $table) use ($creator, $definition){
-				$creator($table, $definition);
+			$this->foreigns[$name] = [];
+
+			if (isset($definition->foreign)) {
+				$this->foreigns[$name] = (array) $definition->foreign;
+			}
+
+			$uniques = [];
+			
+			if (isset($definition->unique)) {
+				$uniques = (array) $definition->unique;
+			}
+
+			$builder->create($name, function(Blueprint $table) use ($creator, $name, $definition, $uniques){
+				
+				$creator($table, $name, $definition, $uniques);
+
 			});
+
 		}
 	}
 }

@@ -18,7 +18,7 @@ class JablesServiceProvider extends ServiceProvider
 		});
 
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
-			return new commands\Jables($app['jables.runner']);
+			return new commands\Jables($app['jables.runner'], $app['jables.checker']);
 		});
 
 		$this->app['jables.commands.check'] = $this->app->share(function($app){

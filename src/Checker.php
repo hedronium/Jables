@@ -111,7 +111,7 @@ class Checker
 		return $name;
 	}
 
-	public function structuralError()
+	public function syntaxError()
 	{
 		foreach ($this->files as $i => $file) {
 			try {
@@ -204,7 +204,7 @@ class Checker
 		return null;
 	}
 
-	public function schematicError()
+	public function schemaError()
 	{
 		$errors = [];
 
@@ -237,7 +237,7 @@ class Checker
 		return null;
 	}
 
-	public function resolveRefferencechecks()
+	public function resolveRefferenceChecks()
 	{
 		$checks = &$this->refference_checks;
 
@@ -250,7 +250,7 @@ class Checker
 		}
 	}
 
-	public function refferentialError()
+	public function foreignKeyError()
 	{
 		$this->resolveRefferencechecks();
 
@@ -312,6 +312,23 @@ class Checker
 					}
 				} elseif ($fields[$child]->$check !== $fields[$parent]->$check) {
 					return "The fields definitions $child & $parent don't match. ($check)";
+				}
+			}
+		}
+	}
+
+	public function uniqueError()
+	{
+		foreach ($this->datas as $name => $table) {
+			$name = $this->getName($name);
+
+			if (isset($table->unique)) {
+				foreach ($table->unique as $compound) {
+					foreach ($compound as $field) {
+						if (!isset($table->fields->$field)) {
+							return "The $field field is missing in table $name. (unique constraints)";
+						}
+					}
 				}
 			}
 		}

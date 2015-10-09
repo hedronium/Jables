@@ -5,10 +5,12 @@ use \hedronium\Jables\Checker;
 
 class Check extends Command
 {
+	use Checks;
+
 	protected $signature = 'jables:check';
 	protected $description = 'Checks the Schema files for inconsistencies.';
 
-	protected $checker = null;
+	protected $app = null;
 
 	public function __construct(Checker $checker)
 	{
@@ -18,32 +20,6 @@ class Check extends Command
 
 	public function handle()
 	{
-		$this->info('Checking for Structural Errors...');
-		$errors = $this->checker->structuralError();
-
-		if ($errors !== null) {
-			$this->error($errors);
-			return;
-		}
-
-		$this->info('Checking for Schematic Errors...');
-		$errors = $this->checker->schematicError();
-
-		if ($errors !== null) {
-			$this->error(print_r($errors, true));
-			return;
-		}
-
-		$this->info('Checking for Refferential Errors...');
-		$errors = $this->checker->refferentialError();
-
-		if ($errors !== null) {
-			$this->error(print_r($errors, true));
-			return;
-		}
-		
-		$this->info('--------------------------');
-		$this->info('Looks OK! :D');
-		$this->info('--------------------------');
+		$this->check();
 	}
 }
