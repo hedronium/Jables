@@ -406,7 +406,7 @@ More that one field makes your primary key? No Problem! Just create a `primary`(
 
 Now "house stark of the north" can be looked up without giving the starks a Numeric ID!
 
-# Unique Constraints
+## Unique Constraints
 All field definitions accept the `unique` property. set it to `true` to make it an unique field like...
 
 ```JSON
@@ -417,7 +417,7 @@ All field definitions accept the `unique` property. set it to `true` to make it 
 }
 ```
 
-## Composite Unique Constraint
+### Composite Unique Constraint
 You can created unique constraints across many fields. Just create a `unique`(`list`) property on your root object (sibling to your `fields` property) like...
 
 ```JSON
