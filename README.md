@@ -65,7 +65,7 @@ return [
 - **table** - The name of the special table jables creates for tracking which tables have been created and which has not.
 - **folder** - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's `database` folder.
 
-> Yes it is highly suggested that you store it in a folder without your database folder but different from your migrations folder.
+> Yes it is highly suggested that you store it in a folder within your database folder but different from your migrations folder.
 
 # Usage
 ## Writing Schemas
@@ -123,7 +123,6 @@ Heres a list
 - [tiny-integer](#tiny-integer)
 - [timestamp](#timestamp)
 
-## Numbers
 ### integer
 ```JSON
 "awesomeness": {
@@ -205,8 +204,14 @@ The `DOUBLE` type equivalent. It requires you to set the `digits` & `precision` 
 ### decimal
 The `DECIMAL` type. Properties same as `double`.
 
+```JSON
+{
+    "type": "decimal",
+    "digits": 10,
+    "precision": 5
+}
+```
 
-## String & Character Types
 ### string
 `string` is the `VARCHAR` type, and it accepts a `length` property like...
 
@@ -229,9 +234,15 @@ Its exactly like string it just uses the `CHAR` type and the `length` property i
 }
 ```
 
-## Text
+
 ### text
 Text doesn't require any special properties.
+
+```JSON
+{
+    "type": "text"
+}
+```
 
 ### long-text
 Same as `text`.
@@ -249,10 +260,8 @@ Same as `text`.
 }
 ```
 
-## Dates & Times
-They don't have any special properties.
-
 ### date
+No Special Properties.
 ```JSON
 {
     "type": "date"
@@ -260,6 +269,7 @@ They don't have any special properties.
 ```
 
 ### time
+No Special Properties.
 ```JSON
 {
     "type": "time"
@@ -267,6 +277,7 @@ They don't have any special properties.
 ```
 
 ### date-time
+No Special Properties.
 ```JSON
 {
     "type": "date-time"
@@ -274,13 +285,13 @@ They don't have any special properties.
 ```
 
 ### timestamp
+No Special Properties.
 ```JSON
 {
     "type": "timestamp"
 }
 ```
 
-## Others
 ### enum
 for the `ENUM` type. It is required that you set the `values`(`list`) property.
 ```JSON
@@ -330,3 +341,126 @@ No special properties.
 }
 ```
 
+## Default Values
+All field definitions accept the `default` property for when you want to set the default value of a field.
+
+Used like...
+```JSON
+{
+    "type": "string",
+    "default": "cake"
+}
+```
+
+## Nullable Fields
+All field definitions accept the `nullable`(`boolean`) property. If set to true, the field can be left null.
+
+Used like...
+```JSON
+{
+    "type": "string",
+    "nullable": true
+}
+```
+
+## Primary Keys
+if you set the `ai` to true on a `integer` type or similar field. That field automatically becomes the primary key (its a Laravel thing).
+
+Apart from that, you can set the `primary` property on any field to true like...
+```JSON
+{
+    "type": "string",
+    "primary": true
+}
+```
+
+### Composite Primary Keys
+More that one field makes your primary key? No Problem! Just create a `primary`(`list`) property on your root object (sibling to your `fields` property) like...
+
+```JSON
+{
+    "fields": {
+        "region": {
+            "type": "string"
+        },
+        "house": {
+            "type": "string"
+        }
+    },
+    "primary": ["region", "house"]
+}
+```
+
+Now "house stark of the north" can be looked up without giving the starks a Numeric ID!
+
+# Unique Constraints
+All field definitions accept the `unique` property. set it to `true` to make it an unique field like...
+
+```JSON
+{
+    "type": "string",
+    "length": 20
+    "unique": true
+}
+```
+
+## Composite Unique Constraint
+You can created unique constraints across many fields. Just create a `unique`(`list`) property on your root object (sibling to your `fields` property) like...
+
+```JSON
+{
+    "fields": {
+        "region": {
+            "type": "string"
+        },
+        "house": {
+            "type": "string"
+        }
+    },
+    "unique": [
+        ["region", "house"]
+    ]
+}
+```
+
+Yes, it is a list inside a list. You know you could want to make multiple composite unique constraints, but at least now you know there can only be one house "stark" in the "north" region.
+
+## Foreign Key Constraints
+Got you covered! All fields accept the `foreign` property. You can set it to a string containing the name of the table and the name of the field of that table separated by a dot. (eg. `users.id`)
+
+```JSON
+"user_id": {
+    "type": "integer",
+    "attributes": [
+        "unsigned"
+    ],
+    "foreign": "users.id"
+}
+```
+
+this `user_id` field will now reference `id` on the `users` table.
+
+You could also define them like you define unique constraints like...
+```JSON
+{
+    "fields": {
+        "user_id": {
+            "type": "integer",
+            "attributes": [
+                "unsigned"
+            ]
+        }
+        "burger_id": {
+            "type": "integer",
+            "attributes": [
+                "unsigned"
+            ]
+        }
+    },
+    "foreign": {
+        "user_id": "users.id",
+        "burger_id": "burgers.id"
+    }
+}
+```
+This will work totally fine.
