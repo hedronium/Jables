@@ -354,6 +354,32 @@ No special properties.
 }
 ```
 
+## Timestamps
+Yes, just like in Schema Builder, you can create the two fields `created_at` and `updated_at` in a simple way.
+
+Just create a special `timestamps` property in yours `fields` object and set it to true.
+
+Like:
+```JSON
+{
+    "fields": {
+        "user_id": {
+            "type": "integer",
+            "attributes": [
+                "unsigned"
+            ]
+        },
+        "burger_id": {
+            "type": "integer",
+            "attributes": [
+                "unsigned"
+            ]
+        },
+        "timestamps": true
+    }
+}
+```
+
 ## Default Values
 All field definitions accept the `default` property for when you want to set the default value of a field.
 

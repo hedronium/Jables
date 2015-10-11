@@ -45,8 +45,11 @@
 			"type": "array",
 			"minItems": 2
 		},
-		"timestamps": {
-			"type": "boolean"
+		"title": {
+			"type": "string"
+		},
+		"description": {
+			"type": "string"
 		}
 	},
 	"required": ["fields"]
