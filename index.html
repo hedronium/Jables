@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Jables by Hedronium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Jables</h1>
+      <h2 class="project-tagline">Write Database Schema in JSON! (for Laravel5)</h2>
+      <a href="https://github.com/Hedronium/Jables" class="btn">View on GitHub</a>
+      <a href="https://github.com/Hedronium/Jables/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Hedronium/Jables/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="jables-beta" class="anchor" href="#jables-beta" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jables (Beta)</h1>
+
+<p>Write your Database Schema in JSON. Let Jables handle the Rest. (For Laravel 5)</p>
+
+<blockquote>
+<p>Did you ever contemplate how nice it would be if your migration files weren't named with such odd names and how easy it would be if bringing changes to a table meant you only had to change one file, and all of it stored nicely in your version control?</p>
+
+<p>Yeah we did too, so we created <strong>Jables</strong>.</p>
+</blockquote>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>[x] Writing Schema in JSON</li>
+<li>[x] Laravel Integration</li>
+<li>[x] Comprehensive Field Types </li>
+<li>[x] Error detection before Hitting the Database (can your migrations do that?)</li>
+<li>[x] Checking JSON Syntax</li>
+<li>[x] Checking Foreign key References.</li>
+<li>[x] Checking Unique key Constraints.</li>
+<li>[x] Table De-Construction Command</li>
+<li>[ ] Table "Diff"-ing so we don't have to destroy and recreate all the tables all the time. (we're working on it)</li>
+<li>[ ] Automatic Database Documentation generator (we're working on it)</li>
+<li>[ ] JSON Prettifyer. we know you love nicely formatted code. (we're working on it)</li>
+<li>[ ] Automatic Documentation Builder (we're working on it)</li>
+</ul>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<h2>
+<a id="grabing-it" class="anchor" href="#grabing-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grabing It</h2>
+
+<p>First, we need to grab it through Composer (composer is required as we also depend on its autoloading facilities)</p>
+
+<pre><code>composer require hedronium/jables
+</code></pre>
+
+<p>or by adding it to the require list in you <code>composer.json</code> file, then calling <code>composer install</code></p>
+
+<div class="highlight highlight-source-json"><pre>require: {
+    <span class="pl-s"><span class="pl-pds">"</span>hedronium/jables<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>dev-master<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h2>
+<a id="registering-it" class="anchor" href="#registering-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Registering It</h2>
+
+<p>This step is very important. You must add Jables to Laravel as a service provider.</p>
+
+<p>To do this, open up your <code>config/app.php</code> and add 
+<code>hedronium\Jables\JablesServiceProvider</code> to the Service Providers list. Like:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-s"><span class="pl-pds">'</span>providers<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">    <span class="pl-c">// .... other providers and stuff ...</span></span>
+<span class="pl-s1">    <span class="pl-c1">hedronium\Jables\</span><span class="pl-c1">JablesServiceProvider</span><span class="pl-k">::</span><span class="pl-c1">class</span></span>
+<span class="pl-s1">]</span></pre></div>
+
+<h2>
+<a id="check-it-out" class="anchor" href="#check-it-out" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check it out!</h2>
+
+<p>On the command line run</p>
+
+<pre><code>php artisan
+</code></pre>
+
+<p>and check to see if the <code>jables</code> command and the <code>jables</code> section shows up.</p>
+
+<h1>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h1>
+
+<p>Jables usually works right out of the box with no configuration required, but if you do wanna get pokey, we have 2 configuration options for you.</p>
+
+<p>First publish the configuration files. with</p>
+
+<pre><code>php artisan vendor:publish
+</code></pre>
+
+<p>after running that a <code>jables.php</code> should show up in your <code>config</code> folder with the following contents...</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">return</span> [</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>table<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>folder<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">];</span></pre></div>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<ul>
+<li>
+<strong>table</strong> - The name of the special table jables creates for tracking which tables have been created and which has not.</li>
+<li>
+<strong>folder</strong> - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's <code>database</code> folder.</li>
+</ul>
+
+<blockquote>
+<p>Yes it is highly suggested that you store it in a folder within your database folder but different from your migrations folder.</p>
+</blockquote>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<h2>
+<a id="writing-schemas" class="anchor" href="#writing-schemas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing Schemas</h2>
+
+<p>The schemas files are usually stored in the <code>database/jables</code> folder unless you configure it to be otherwise.</p>
+
+<p>The Filename <strong>is</strong> your table name. So if you were to create a <code>users</code> table, your file name would be <code>users.json</code> nested under <code>database/jables</code></p>
+
+<h3>
+<a id="hello-world-in-jables" class="anchor" href="#hello-world-in-jables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World! (in Jables)</h3>
+
+<p><code>food.json</code></p>
+
+<pre><code>{
+    "fields": {
+        "name": {
+            "type": "string"
+        }
+    }
+}
+</code></pre>
+
+<p>now run <code>php artisan jables</code>. This will create a table named <code>food</code> with a field named <code>name</code> with the type being <code>varchar</code>.</p>
+
+<h3>
+<a id="the-formal-breakdown" class="anchor" href="#the-formal-breakdown" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Formal Breakdown</h3>
+
+<p>Well you define all your fields in the <code>fields</code> property on your root object of your json file. The <code>fields</code> property itself is an object and every property of the <code>fields</code> object corresponds to a table field.</p>
+
+<p>Each property (which are the field definitions) within the <code>fields</code> object is once again another object. The only hard requirement for it all is the <code>type</code> property on them. This tells jables what is the type of the field.</p>
+
+<p>in our 'hello world' example the type of <code>string</code> corresponds to <code>varchar</code> just like in Laravel migrations (ssssh, we actaully use Laravel's <a href="http://laravel.com/docs/5.1/migrations">Schema Builder</a> behind the schenes, please don't tell anyone).</p>
+
+<h2>
+<a id="types-available" class="anchor" href="#types-available" aria-hidden="true"><span class="octicon octicon-link"></span></a>Types Available</h2>
+
+<p>Heres a list</p>
+
+<ul>
+<li><a href="#big-integer">big-integer</a></li>
+<li><a href="#binary">binary</a></li>
+<li><a href="#boolean">boolean</a></li>
+<li><a href="#char">char</a></li>
+<li><a href="#date">date</a></li>
+<li><a href="#date-time">date-time</a></li>
+<li><a href="#decimal">decimal</a></li>
+<li><a href="#double">double</a></li>
+<li><a href="#enum">enum</a></li>
+<li><a href="#fltoat">float</a></li>
+<li><a href="#integer">integer</a></li>
+<li><a href="#json">json</a></li>
+<li><a href="#jsonb">jsonb</a></li>
+<li><a href="#long-text">long-text</a></li>
+<li><a href="#medium-integer">medium-integer</a></li>
+<li><a href="#medium-text">medium-text</a></li>
+<li><a href="#morphs">morphs</a></li>
+<li><a href="#small-integer">small-integer</a></li>
+<li><a href="#string">string</a></li>
+<li><a href="#text">text</a></li>
+<li><a href="#time">time</a></li>
+<li><a href="#tiny-integer">tiny-integer</a></li>
+<li><a href="#timestamp">timestamp</a></li>
+</ul>
+
+<h3>
+<a id="integer" class="anchor" href="#integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>integer</h3>
+
+<div class="highlight highlight-source-json"><pre><span class="pl-s"><span class="pl-pds">"</span>awesomeness<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>You can write <code>attributes</code> which is a list. Currently only supports one attribute, the <code>unsigned</code> attribute</p>
+
+<p>like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+        <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+    ]
+}</pre></div>
+
+<p>You can only set it to auto-increment with the <code>ai</code> (<code>boolean</code>) property like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>ai<span class="pl-pds">"</span></span> : <span class="pl-c1">true</span>
+}</pre></div>
+
+<h3>
+<a id="big-integer" class="anchor" href="#big-integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>big-integer</h3>
+
+<p>Same as the average integer just write the type different like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>big-integer<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="medium-integer" class="anchor" href="#medium-integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>medium-integer</h3>
+
+<p>Same as the average integer just write the type different like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>medium-integer<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="small-integer" class="anchor" href="#small-integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>small-integer</h3>
+
+<p>Same as the average integer just write the type different like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>small-integer<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="tiny-integer" class="anchor" href="#tiny-integer" aria-hidden="true"><span class="octicon octicon-link"></span></a>tiny-integer</h3>
+
+<p>Same as the average integer just write the type different like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>tiny-integer<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="float" class="anchor" href="#float" aria-hidden="true"><span class="octicon octicon-link"></span></a>float</h3>
+
+<p>The <code>FLOAT</code> type equivalent.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>float<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="double" class="anchor" href="#double" aria-hidden="true"><span class="octicon octicon-link"></span></a>double</h3>
+
+<p>The <code>DOUBLE</code> type equivalent. It requires you to set the <code>digits</code> &amp; <code>precision</code> properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>double<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>digits<span class="pl-pds">"</span></span>: <span class="pl-c1">10</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>precision<span class="pl-pds">"</span></span>: <span class="pl-c1">5</span>
+}</pre></div>
+
+<h3>
+<a id="decimal" class="anchor" href="#decimal" aria-hidden="true"><span class="octicon octicon-link"></span></a>decimal</h3>
+
+<p>The <code>DECIMAL</code> type. Properties same as <code>double</code>.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>decimal<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>digits<span class="pl-pds">"</span></span>: <span class="pl-c1">10</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>precision<span class="pl-pds">"</span></span>: <span class="pl-c1">5</span>
+}</pre></div>
+
+<h3>
+<a id="string" class="anchor" href="#string" aria-hidden="true"><span class="octicon octicon-link"></span></a>string</h3>
+
+<p><code>string</code> is the <code>VARCHAR</code> type, and it accepts a <code>length</code> property like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>length<span class="pl-pds">"</span></span>: <span class="pl-c1">50</span>
+}</pre></div>
+
+<p>but the <code>length</code> property isn't required.</p>
+
+<h3>
+<a id="char" class="anchor" href="#char" aria-hidden="true"><span class="octicon octicon-link"></span></a>char</h3>
+
+<p>Its exactly like string it just uses the <code>CHAR</code> type and the <code>length</code> property is absolutely required. NO QUESTIONS!</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>char<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>length<span class="pl-pds">"</span></span>: <span class="pl-c1">10</span>
+}</pre></div>
+
+<h3>
+<a id="text" class="anchor" href="#text" aria-hidden="true"><span class="octicon octicon-link"></span></a>text</h3>
+
+<p>Text doesn't require any special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="long-text" class="anchor" href="#long-text" aria-hidden="true"><span class="octicon octicon-link"></span></a>long-text</h3>
+
+<p>Same as <code>text</code>.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>long-text<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="medium-text" class="anchor" href="#medium-text" aria-hidden="true"><span class="octicon octicon-link"></span></a>medium-text</h3>
+
+<p>Same as <code>text</code>.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>medium-text<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="date" class="anchor" href="#date" aria-hidden="true"><span class="octicon octicon-link"></span></a>date</h3>
+
+<p>No Special Properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="time" class="anchor" href="#time" aria-hidden="true"><span class="octicon octicon-link"></span></a>time</h3>
+
+<p>No Special Properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>time<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="date-time" class="anchor" href="#date-time" aria-hidden="true"><span class="octicon octicon-link"></span></a>date-time</h3>
+
+<p>No Special Properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>date-time<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="timestamp" class="anchor" href="#timestamp" aria-hidden="true"><span class="octicon octicon-link"></span></a>timestamp</h3>
+
+<p>No Special Properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>timestamp<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="enum" class="anchor" href="#enum" aria-hidden="true"><span class="octicon octicon-link"></span></a>enum</h3>
+
+<p>for the <code>ENUM</code> type. It is required that you set the <code>values</code>(<code>list</code>) property.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>enum<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>values<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>wizard<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>muggle<span class="pl-pds">"</span></span>]
+}</pre></div>
+
+<h3>
+<a id="boolean" class="anchor" href="#boolean" aria-hidden="true"><span class="octicon octicon-link"></span></a>boolean</h3>
+
+<p>No special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>boolean<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="json" class="anchor" href="#json" aria-hidden="true"><span class="octicon octicon-link"></span></a>json</h3>
+
+<p>No special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="jsonb" class="anchor" href="#jsonb" aria-hidden="true"><span class="octicon octicon-link"></span></a>jsonb</h3>
+
+<p>No special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>jsonb<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="morphs" class="anchor" href="#morphs" aria-hidden="true"><span class="octicon octicon-link"></span></a>morphs</h3>
+
+<p>No special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>morphs<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h3>
+<a id="binary" class="anchor" href="#binary" aria-hidden="true"><span class="octicon octicon-link"></span></a>binary</h3>
+
+<p>No special properties.</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>binary<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h2>
+<a id="timestamps" class="anchor" href="#timestamps" aria-hidden="true"><span class="octicon octicon-link"></span></a>Timestamps</h2>
+
+<p>Yes, just like in Schema Builder, you can create the two fields <code>created_at</code> and <code>updated_at</code> in a simple way.</p>
+
+<p>Just create a special <code>timestamps</code> property in yours <code>fields</code> object and set it to true.</p>
+
+<p>Like:</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>user_id<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+                <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+            ]
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>burger_id<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+                <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+            ]
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>timestamps<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
+    }
+}</pre></div>
+
+<h2>
+<a id="default-values" class="anchor" href="#default-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default Values</h2>
+
+<p>All field definitions accept the <code>default</code> property for when you want to set the default value of a field.</p>
+
+<p>Used like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>default<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>cake<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<h2>
+<a id="nullable-fields" class="anchor" href="#nullable-fields" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nullable Fields</h2>
+
+<p>All field definitions accept the <code>nullable</code>(<code>boolean</code>) property. If set to true, the field can be left null.</p>
+
+<p>Used like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>nullable<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
+}</pre></div>
+
+<h2>
+<a id="primary-keys" class="anchor" href="#primary-keys" aria-hidden="true"><span class="octicon octicon-link"></span></a>Primary Keys</h2>
+
+<p>if you set the <code>ai</code> to true on a <code>integer</code> type or similar field. That field automatically becomes the primary key (its a Laravel thing).</p>
+
+<p>Apart from that, you can set the <code>primary</code> property on any field to true like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>primary<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
+}</pre></div>
+
+<h3>
+<a id="composite-primary-keys" class="anchor" href="#composite-primary-keys" aria-hidden="true"><span class="octicon octicon-link"></span></a>Composite Primary Keys</h3>
+
+<p>More that one field makes your primary key? No Problem! Just create a <code>primary</code>(<code>list</code>) property on your root object (sibling to your <code>fields</code> property) like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>region<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>house<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">"</span>primary<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>region<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>house<span class="pl-pds">"</span></span>]
+}</pre></div>
+
+<p>Now "house stark of the north" can be looked up without giving the starks a Numeric ID!</p>
+
+<h2>
+<a id="unique-constraints" class="anchor" href="#unique-constraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unique Constraints</h2>
+
+<p>All field definitions accept the <code>unique</code> property. set it to <code>true</code> to make it an unique field like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>length<span class="pl-pds">"</span></span>: <span class="pl-c1">20</span>,
+    <span class="pl-s"><span class="pl-pds">"</span>unique<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>
+}</pre></div>
+
+<h3>
+<a id="composite-unique-constraint" class="anchor" href="#composite-unique-constraint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Composite Unique Constraint</h3>
+
+<p>You can created unique constraints across many fields. Just create a <code>unique</code>(<code>list</code>) property on your root object (sibling to your <code>fields</code> property) like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>region<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>house<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">"</span>unique<span class="pl-pds">"</span></span>: [
+        [<span class="pl-s"><span class="pl-pds">"</span>region<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>house<span class="pl-pds">"</span></span>]
+    ]
+}</pre></div>
+
+<p>Yes, it is a list inside a list. You know you could want to make multiple composite unique constraints, but at least now you know there can only be one house "stark" in the "north" region.</p>
+
+<h2>
+<a id="foreign-key-constraints" class="anchor" href="#foreign-key-constraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Foreign Key Constraints</h2>
+
+<p>Got you covered! All fields accept the <code>foreign</code> property. You can set it to a string containing the name of the table and the name of the field of that table separated by a dot. (eg. <code>users.id</code>)</p>
+
+<div class="highlight highlight-source-json"><pre><span class="pl-s"><span class="pl-pds">"</span>user_id<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+        <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+    ],
+    <span class="pl-s"><span class="pl-pds">"</span>foreign<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>users.id<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>this <code>user_id</code> field will now reference <code>id</code> on the <code>users</code> table.</p>
+
+<p>You could also define them like you define unique constraints like...</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>user_id<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+                <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+            ]
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>burger_id<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>integer<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>attributes<span class="pl-pds">"</span></span>: [
+                <span class="pl-s"><span class="pl-pds">"</span>unsigned<span class="pl-pds">"</span></span>
+            ]
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">"</span>foreign<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>user_id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>users.id<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>burger_id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>burgers.id<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<p>This will work totally fine.</p>
+
+<h1>
+<a id="commands" class="anchor" href="#commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commands</h1>
+
+<h2>
+<a id="jables" class="anchor" href="#jables" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables</h2>
+
+<pre><code>php artisan jables
+</code></pre>
+
+<p>Checks your JSON files then creates your Database Tables</p>
+
+<h2>
+<a id="jablescheck" class="anchor" href="#jablescheck" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:check</h2>
+
+<pre><code>php artisan jables:check
+</code></pre>
+
+<p>Checks your JSOn files and reports errors.</p>
+
+<h2>
+<a id="jablesrefresh" class="anchor" href="#jablesrefresh" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:refresh</h2>
+
+<pre><code>php artisan jables:refresh
+</code></pre>
+
+<p>Destroys all the tables then recreates them from your (possibly updated) json files.
+(warning. risk of data loss)</p>
+
+<h2>
+<a id="jablesdestroy" class="anchor" href="#jablesdestroy" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:destroy</h2>
+
+<pre><code>php artisan jables:destroy
+</code></pre>
+
+<p>Removes all the tables that jables created from Database.</p>
+
+<h2>
+<a id="jablescreate-table" class="anchor" href="#jablescreate-table" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:create-table</h2>
+
+<pre><code>php artisan jables:create-table
+</code></pre>
+
+<p>Creates Jables' own tracking table in database.</p>
+
+<h1>
+<a id="options-1" class="anchor" href="#options-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h1>
+
+<p>All commands just accept one option. That is the <code>--database=[connection]</code> option. You can use it to override which connection Jables uses to do its business.</p>
+
+<p>example</p>
+
+<pre><code>php artisan jables --database=memory
+</code></pre>
+
+<h1>
+<a id="documenting-tables" class="anchor" href="#documenting-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documenting Tables</h1>
+
+<p>All field and table definitions accept <code>title</code> and <code>description</code> properties that can be used to document your database schema.</p>
+
+<p>We're also working on a feature that generates HTML documentation from your JSON files but for now, you gotta create it on your own. (Maybe even send us a pull request. PLEASE. WE'RE DESPERATE.)</p>
+
+<p>example:</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Food<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>FOOOD! GLORIOUS FOOD!<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Name<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Name of the food.<span class="pl-pds">"</span></span>
+        }
+    }
+}</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Hedronium/Jables">Jables</a> is maintained by <a href="https://github.com/Hedronium">Hedronium</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-65319241-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
