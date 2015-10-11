@@ -5,6 +5,19 @@ Write your Database Schema in JSON. Let Jables handle the Rest. (For Laravel 5)
 > 
 > Yeah we did too, so we created **Jables**.
 
+# Features
+- [x] Writing Schema in JSON
+- [x] Laravel Integration
+- [x] Comprehensive Field Types 
+- [x] Error detection before Hitting the Database (can your migrations do that?)
+- [x] Checking JSON Syntax
+- [x] Checking Foreign key References.
+- [x] Checking Unique key Constraints.
+- [x] Table De-Construction Command
+- [ ] Table "Diff"-ing so we don't have to destroy and recreate all the tables all the time. (we're working on it)
+- [ ] Automatic Database Documentation generator (we're working on it)
+- [ ] JSON Prettifyer. we know you love nicely formatted code. (we're working on it)
+
 # Installation
 
 ## Grabing It
@@ -399,7 +412,7 @@ All field definitions accept the `unique` property. set it to `true` to make it 
 ```JSON
 {
     "type": "string",
-    "length": 20
+    "length": 20,
     "unique": true
 }
 ```
@@ -449,7 +462,7 @@ You could also define them like you define unique constraints like...
             "attributes": [
                 "unsigned"
             ]
-        }
+        },
         "burger_id": {
             "type": "integer",
             "attributes": [
@@ -464,3 +477,63 @@ You could also define them like you define unique constraints like...
 }
 ```
 This will work totally fine.
+
+# Commands
+## jables
+```
+php artisan jables
+```
+Checks your JSON files then creates your Database Tables
+
+## jables:check
+```
+php artisan jables:check
+```
+Checks your JSOn files and reports errors.
+
+## jables:refresh
+```
+php artisan jables:refresh
+```
+Destroys all the tables then recreates them from your (possibly updated) json files.
+(warning. risk of data loss)
+
+## jables:destroy
+```
+php artisan jables:destroy
+```
+Removes all the tables that jables created from Database.
+
+## jables:create-table
+```
+php artisan jables:create-table
+```
+Creates Jables' own tracking table in database.
+
+# Options
+All commands just accept one option. That is the `--database=[connection]` option. You can use it to override which connection Jables uses to do its business.
+
+example
+```
+php artisan jables --database=memory
+```
+
+# Documenting Tables
+All field and table definitions accept `title` and `description` properties that can be used to document your database schema.
+
+We're also working on a feature that generates HTML documentation from your JSON files but for now, you gotta create it on your own. (Maybe even send us a pull request. PLEASE. WE'RE DESPERATE.)
+
+example:
+```JSON
+{
+    "title": "Food",
+    "description": "FOOOD! GLORIOUS FOOD!",
+    "fields": {
+        "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the food."
+        }
+    }
+}
+```
