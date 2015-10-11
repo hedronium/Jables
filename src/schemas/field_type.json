@@ -22,6 +22,7 @@
 			"small-integer",
 			"string",
 			"text",
+			"time",
 			"tiny-integer",
 			"timestamp"
 		]

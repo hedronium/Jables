@@ -137,6 +137,9 @@ class Runner
 			case 'timestamp':
 				$obj = new types\Timestamp;
 				break;
+			case 'time':
+				$obj = new types\Time;
+				break;
 			case 'tiny-integer':
 				$obj = new types\TinyInteger;
 				break;
