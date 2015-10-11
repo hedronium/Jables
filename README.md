@@ -17,6 +17,7 @@ Write your Database Schema in JSON. Let Jables handle the Rest. (For Laravel 5)
 - [ ] Table "Diff"-ing so we don't have to destroy and recreate all the tables all the time. (we're working on it)
 - [ ] Automatic Database Documentation generator (we're working on it)
 - [ ] JSON Prettifyer. we know you love nicely formatted code. (we're working on it)
+- [ ] Automatic Documentation Builder (we're working on it)
 
 # Installation
 
