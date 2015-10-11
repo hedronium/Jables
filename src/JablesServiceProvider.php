@@ -62,7 +62,7 @@ class JablesServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		$this->publishes([
-			__DIR__.'config/jables.php' => config_path('jables.php'),
+			__DIR__.'/config/jables.php' => config_path('jables.php'),
 		]);
 
 		$this->commands([
