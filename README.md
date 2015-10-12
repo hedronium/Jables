@@ -1,46 +1,28 @@
-# Jables (Beta)
-Write your Database Schema in JSON. Let Jables handle the Rest. (For Laravel 5)
+# Jables - BETA
+> For Laravel 5
 
-> Did you ever contemplate how nice it would be if your migration files weren't named with such odd names and how easy it would be if bringing changes to a table meant you only had to change one file, and all of it stored nicely in your version control?
-> 
-> Yeah we did too, so we created **Jables**.
+Write your Database Schema in JSON, with clean naming conventions and store them nicely in Version Control.
 
 # Features
-- [x] Writing Schema in JSON
+- [x] Schema in JSON
 - [x] Laravel Integration
-- [x] Comprehensive Field Types 
-- [x] Error detection before Hitting the Database (can your migrations do that?)
+- [x] All Laravel Field Types supported.
 - [x] Checking JSON Syntax
 - [x] Checking Foreign key References.
 - [x] Checking Unique key Constraints.
-- [x] Table De-Construction Command
-- [ ] Table "Diff"-ing so we don't have to destroy and recreate all the tables all the time. (we're working on it)
-- [ ] Automatic Database Documentation generator (we're working on it)
-- [ ] JSON Prettifyer. we know you love nicely formatted code. (we're working on it)
-- [ ] Automatic Documentation Builder (we're working on it)
+- [x] Automatic Table Deconstruction
+- [ ] JSON Syntax Prettifyer
+- [ ] Schema Diff (build changes not complete reconstructions)
+- [ ] Automatic Documentation Builder
+- [ ] JSON to Migration Transpiler
 
 # Installation
-
-## Grabing It
-First, we need to grab it through Composer (composer is required as we also depend on its autoloading facilities)
-
+Grab it through Composer.
 ```
 composer require hedronium/jables
 ```
 
-or by adding it to the require list in you `composer.json` file, then calling `composer install`
-
-```JSON
-require: {
-    "hedronium/jables": "dev-master"
-}
-```
-
-## Registering It
-This step is very important. You must add Jables to Laravel as a service provider.
-
-To do this, open up your `config/app.php` and add 
-`hedronium\Jables\JablesServiceProvider` to the Service Providers list. Like:
+You must add Jables to Laravel as a service provider. To do this, open up your `config/app.php` and add `hedronium\Jables\JablesServiceProvider` to the Service Providers list. Like:
 
 ```PHP
 'providers' => [
@@ -49,49 +31,36 @@ To do this, open up your `config/app.php` and add
 ]
 ```
 
-## Check it out!
-
+## Testing Installation
 On the command line run
 ```
 php artisan
 ```
 and check to see if the `jables` command and the `jables` section shows up.
 
-# Configuration
-Jables usually works right out of the box with no configuration required, but if you do wanna get pokey, we have 2 configuration options for you.
-
-First publish the configuration files. with
-```
-php artisan vendor:publish
-```
-
-after running that a `jables.php` should show up in your `config` folder with the following contents...
-
-```PHP
-<?php
-return [
-    'table' => 'jables',
-    'folder' => 'jables'
-];
-```
-
-## Options
-- **table** - The name of the special table jables creates for tracking which tables have been created and which has not.
-- **folder** - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's `database` folder.
-
-> Yes it is highly suggested that you store it in a folder within your database folder but different from your migrations folder.
-
 # Usage
+## Commands
+`artisan jables` - Checks your JSON files then creates your Database Tables  
+`artisan jables:check` - Checks your JSOn files and reports errors.  
+`artisan jables:refresh` - Destroys all the tables then recreates them from your (possibly updated) json files. (warning. risk of data loss)  
+`artisan jables:destroy` - Removes all the tables that jables created from  Database.
+`jables:create-table` - Creates Jables' own tracking table in database.  
+
+All the commands accept the  `--database=[connection]` option. You can use it to override which connection Jables uses to do its business.
+
+example
+```
+php artisan jables --database=memory
+```
+
 ## Writing Schemas
-The schemas files are usually stored in the `database/jables` folder unless you configure it to be otherwise.
+The Schema files are usually stored in the `database/jables` (you need to create it) folder unless you configure it to be otherwise. The Filename **is** your table name. So if you were to create a `users` table, your file name would be `users.json` nested under `database/jables`
 
-The Filename **is** your table name. So if you were to create a `users` table, your file name would be `users.json` nested under `database/jables`
-
-### Hello World! (in Jables)
+### Getting Started
 
 `food.json`
 
-```
+```JSON
 {
     "fields": {
         "name": {
@@ -108,7 +77,7 @@ Well you define all your fields in the `fields` property on your root object of 
 
 Each property (which are the field definitions) within the `fields` object is once again another object. The only hard requirement for it all is the `type` property on them. This tells jables what is the type of the field.
 
-in our 'hello world' example the type of `string` corresponds to `varchar` just like in Laravel migrations (ssssh, we actaully use Laravel's [Schema Builder](http://laravel.com/docs/5.1/migrations) behind the schenes, please don't tell anyone).
+in our 'hello world' example the type of `string` corresponds to `varchar` just like in Laravel migrations (Jables uses Laravel's [Schema Builder](http://laravel.com/docs/5.1/migrations)).
 
 ## Types Available
 Heres a list
@@ -239,7 +208,7 @@ The `DECIMAL` type. Properties same as `double`.
 but the `length` property isn't required.
 
 ### char
-Its exactly like string it just uses the `CHAR` type and the `length` property is absolutely required. NO QUESTIONS!
+Its exactly like string it just uses the `CHAR` type but the `length` property is absolutely required.
 
 ```JSON
 {
@@ -356,9 +325,9 @@ No special properties.
 ```
 
 ## Timestamps
-Yes, just like in Schema Builder, you can create the two fields `created_at` and `updated_at` in a simple way.
+Just like in Schema Builder, you can create the two fields `created_at` and `updated_at` in a simple way.
 
-Just create a special `timestamps` property in yours `fields` object and set it to true.
+Create a special `timestamps` property in yours `fields` object and set it to true.
 
 Like:
 ```JSON
@@ -431,8 +400,6 @@ More that one field makes your primary key? No Problem! Just create a `primary`(
 }
 ```
 
-Now "house stark of the north" can be looked up without giving the starks a Numeric ID!
-
 ## Unique Constraints
 All field definitions accept the `unique` property. set it to `true` to make it an unique field like...
 
@@ -463,7 +430,7 @@ You can created unique constraints across many fields. Just create a `unique`(`l
 }
 ```
 
-Yes, it is a list inside a list. You know you could want to make multiple composite unique constraints, but at least now you know there can only be one house "stark" in the "north" region.
+Yes, it is a list inside a list, for when you want multiple composite constraints.
 
 ## Foreign Key Constraints
 Got you covered! All fields accept the `foreign` property. You can set it to a string containing the name of the table and the name of the field of that table separated by a dot. (eg. `users.id`)
@@ -505,46 +472,6 @@ You could also define them like you define unique constraints like...
 ```
 This will work totally fine.
 
-# Commands
-## jables
-```
-php artisan jables
-```
-Checks your JSON files then creates your Database Tables
-
-## jables:check
-```
-php artisan jables:check
-```
-Checks your JSOn files and reports errors.
-
-## jables:refresh
-```
-php artisan jables:refresh
-```
-Destroys all the tables then recreates them from your (possibly updated) json files.
-(warning. risk of data loss)
-
-## jables:destroy
-```
-php artisan jables:destroy
-```
-Removes all the tables that jables created from Database.
-
-## jables:create-table
-```
-php artisan jables:create-table
-```
-Creates Jables' own tracking table in database.
-
-# Options
-All commands just accept one option. That is the `--database=[connection]` option. You can use it to override which connection Jables uses to do its business.
-
-example
-```
-php artisan jables --database=memory
-```
-
 # Documenting Tables
 All field and table definitions accept `title` and `description` properties that can be used to document your database schema.
 
@@ -564,3 +491,27 @@ example:
     }
 }
 ```
+
+# Configuration
+Jables usually works right out of the box with no configuration required, but two option does exist.
+
+First publish the configuration files. with
+```
+php artisan vendor:publish
+```
+
+after running that a `jables.php` should show up in your `config` folder with the following contents...
+
+```PHP
+<?php
+return [
+    'table' => 'jables',
+    'folder' => 'jables'
+];
+```
+
+## Options
+- `table` - The name of the special table jables creates for tracking.
+- `folder` - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's `database` folder.
+
+> It is recommend that you store your schema in a folder within your application's `database` folder.
