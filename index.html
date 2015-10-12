@@ -20,58 +20,40 @@
 
     <section class="main-content">
       <h1>
-<a id="jables-beta" class="anchor" href="#jables-beta" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jables (Beta)</h1>
-
-<p>Write your Database Schema in JSON. Let Jables handle the Rest. (For Laravel 5)</p>
+<a id="jables---beta" class="anchor" href="#jables---beta" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jables - BETA</h1>
 
 <blockquote>
-<p>Did you ever contemplate how nice it would be if your migration files weren't named with such odd names and how easy it would be if bringing changes to a table meant you only had to change one file, and all of it stored nicely in your version control?</p>
-
-<p>Yeah we did too, so we created <strong>Jables</strong>.</p>
+<p>For Laravel 5</p>
 </blockquote>
+
+<p>Write your Database Schema in JSON, with clean naming conventions and store them nicely in Version Control.</p>
 
 <h1>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
 
 <ul>
-<li>[x] Writing Schema in JSON</li>
+<li>[x] Schema in JSON</li>
 <li>[x] Laravel Integration</li>
-<li>[x] Comprehensive Field Types </li>
-<li>[x] Error detection before Hitting the Database (can your migrations do that?)</li>
+<li>[x] All Laravel Field Types supported.</li>
 <li>[x] Checking JSON Syntax</li>
 <li>[x] Checking Foreign key References.</li>
 <li>[x] Checking Unique key Constraints.</li>
-<li>[x] Table De-Construction Command</li>
-<li>[ ] Table "Diff"-ing so we don't have to destroy and recreate all the tables all the time. (we're working on it)</li>
-<li>[ ] Automatic Database Documentation generator (we're working on it)</li>
-<li>[ ] JSON Prettifyer. we know you love nicely formatted code. (we're working on it)</li>
-<li>[ ] Automatic Documentation Builder (we're working on it)</li>
+<li>[x] Automatic Table Deconstruction</li>
+<li>[ ] JSON Syntax Prettifyer</li>
+<li>[ ] Schema Diff (build changes not complete reconstructions)</li>
+<li>[ ] Automatic Documentation Builder</li>
+<li>[ ] JSON to Migration Transpiler</li>
 </ul>
 
 <h1>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
 
-<h2>
-<a id="grabing-it" class="anchor" href="#grabing-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grabing It</h2>
-
-<p>First, we need to grab it through Composer (composer is required as we also depend on its autoloading facilities)</p>
+<p>Grab it through Composer.</p>
 
 <pre><code>composer require hedronium/jables
 </code></pre>
 
-<p>or by adding it to the require list in you <code>composer.json</code> file, then calling <code>composer install</code></p>
-
-<div class="highlight highlight-source-json"><pre>require: {
-    <span class="pl-s"><span class="pl-pds">"</span>hedronium/jables<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>dev-master<span class="pl-pds">"</span></span>
-}</pre></div>
-
-<h2>
-<a id="registering-it" class="anchor" href="#registering-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Registering It</h2>
-
-<p>This step is very important. You must add Jables to Laravel as a service provider.</p>
-
-<p>To do this, open up your <code>config/app.php</code> and add 
-<code>hedronium\Jables\JablesServiceProvider</code> to the Service Providers list. Like:</p>
+<p>You must add Jables to Laravel as a service provider. To do this, open up your <code>config/app.php</code> and add <code>hedronium\Jables\JablesServiceProvider</code> to the Service Providers list. Like:</p>
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-s"><span class="pl-pds">'</span>providers<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
 <span class="pl-s1">    <span class="pl-c">// .... other providers and stuff ...</span></span>
@@ -79,7 +61,7 @@
 <span class="pl-s1">]</span></pre></div>
 
 <h2>
-<a id="check-it-out" class="anchor" href="#check-it-out" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check it out!</h2>
+<a id="testing-installation" class="anchor" href="#testing-installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing Installation</h2>
 
 <p>On the command line run</p>
 
@@ -89,60 +71,41 @@
 <p>and check to see if the <code>jables</code> command and the <code>jables</code> section shows up.</p>
 
 <h1>
-<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h1>
-
-<p>Jables usually works right out of the box with no configuration required, but if you do wanna get pokey, we have 2 configuration options for you.</p>
-
-<p>First publish the configuration files. with</p>
-
-<pre><code>php artisan vendor:publish
-</code></pre>
-
-<p>after running that a <code>jables.php</code> should show up in your <code>config</code> folder with the following contents...</p>
-
-<div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
-<span class="pl-s1"><span class="pl-k">return</span> [</span>
-<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>table<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>folder<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span></span>
-<span class="pl-s1">];</span></pre></div>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
 
 <h2>
-<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+<a id="commands" class="anchor" href="#commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commands</h2>
 
-<ul>
-<li>
-<strong>table</strong> - The name of the special table jables creates for tracking which tables have been created and which has not.</li>
-<li>
-<strong>folder</strong> - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's <code>database</code> folder.</li>
-</ul>
+<p><code>artisan jables</code> - Checks your JSON files then creates your Database Tables<br>
+<code>artisan jables:check</code> - Checks your JSOn files and reports errors.<br>
+<code>artisan jables:refresh</code> - Destroys all the tables then recreates them from your (possibly updated) json files. (warning. risk of data loss)<br>
+<code>artisan jables:destroy</code> - Removes all the tables that jables created from  Database.
+<code>jables:create-table</code> - Creates Jables' own tracking table in database.  </p>
 
-<blockquote>
-<p>Yes it is highly suggested that you store it in a folder within your database folder but different from your migrations folder.</p>
-</blockquote>
+<p>All the commands accept the  <code>--database=[connection]</code> option. You can use it to override which connection Jables uses to do its business.</p>
 
-<h1>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+<p>example</p>
+
+<pre><code>php artisan jables --database=memory
+</code></pre>
 
 <h2>
 <a id="writing-schemas" class="anchor" href="#writing-schemas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing Schemas</h2>
 
-<p>The schemas files are usually stored in the <code>database/jables</code> folder unless you configure it to be otherwise.</p>
-
-<p>The Filename <strong>is</strong> your table name. So if you were to create a <code>users</code> table, your file name would be <code>users.json</code> nested under <code>database/jables</code></p>
+<p>The Schema files are usually stored in the <code>database/jables</code> (you need to create it) folder unless you configure it to be otherwise. The Filename <strong>is</strong> your table name. So if you were to create a <code>users</code> table, your file name would be <code>users.json</code> nested under <code>database/jables</code></p>
 
 <h3>
-<a id="hello-world-in-jables" class="anchor" href="#hello-world-in-jables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World! (in Jables)</h3>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
 
 <p><code>food.json</code></p>
 
-<pre><code>{
-    "fields": {
-        "name": {
-            "type": "string"
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>string<span class="pl-pds">"</span></span>
         }
     }
-}
-</code></pre>
+}</pre></div>
 
 <p>now run <code>php artisan jables</code>. This will create a table named <code>food</code> with a field named <code>name</code> with the type being <code>varchar</code>.</p>
 
@@ -153,7 +116,7 @@
 
 <p>Each property (which are the field definitions) within the <code>fields</code> object is once again another object. The only hard requirement for it all is the <code>type</code> property on them. This tells jables what is the type of the field.</p>
 
-<p>in our 'hello world' example the type of <code>string</code> corresponds to <code>varchar</code> just like in Laravel migrations (ssssh, we actaully use Laravel's <a href="http://laravel.com/docs/5.1/migrations">Schema Builder</a> behind the schenes, please don't tell anyone).</p>
+<p>in our 'hello world' example the type of <code>string</code> corresponds to <code>varchar</code> just like in Laravel migrations (Jables uses Laravel's <a href="http://laravel.com/docs/5.1/migrations">Schema Builder</a>).</p>
 
 <h2>
 <a id="types-available" class="anchor" href="#types-available" aria-hidden="true"><span class="octicon octicon-link"></span></a>Types Available</h2>
@@ -293,7 +256,7 @@
 <h3>
 <a id="char" class="anchor" href="#char" aria-hidden="true"><span class="octicon octicon-link"></span></a>char</h3>
 
-<p>Its exactly like string it just uses the <code>CHAR</code> type and the <code>length</code> property is absolutely required. NO QUESTIONS!</p>
+<p>Its exactly like string it just uses the <code>CHAR</code> type but the <code>length</code> property is absolutely required.</p>
 
 <div class="highlight highlight-source-json"><pre>{
     <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>char<span class="pl-pds">"</span></span>,
@@ -421,9 +384,9 @@
 <h2>
 <a id="timestamps" class="anchor" href="#timestamps" aria-hidden="true"><span class="octicon octicon-link"></span></a>Timestamps</h2>
 
-<p>Yes, just like in Schema Builder, you can create the two fields <code>created_at</code> and <code>updated_at</code> in a simple way.</p>
+<p>Just like in Schema Builder, you can create the two fields <code>created_at</code> and <code>updated_at</code> in a simple way.</p>
 
-<p>Just create a special <code>timestamps</code> property in yours <code>fields</code> object and set it to true.</p>
+<p>Create a special <code>timestamps</code> property in yours <code>fields</code> object and set it to true.</p>
 
 <p>Like:</p>
 
@@ -498,8 +461,6 @@
     <span class="pl-s"><span class="pl-pds">"</span>primary<span class="pl-pds">"</span></span>: [<span class="pl-s"><span class="pl-pds">"</span>region<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>house<span class="pl-pds">"</span></span>]
 }</pre></div>
 
-<p>Now "house stark of the north" can be looked up without giving the starks a Numeric ID!</p>
-
 <h2>
 <a id="unique-constraints" class="anchor" href="#unique-constraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unique Constraints</h2>
 
@@ -530,7 +491,7 @@
     ]
 }</pre></div>
 
-<p>Yes, it is a list inside a list. You know you could want to make multiple composite unique constraints, but at least now you know there can only be one house "stark" in the "north" region.</p>
+<p>Yes, it is a list inside a list, for when you want multiple composite constraints.</p>
 
 <h2>
 <a id="foreign-key-constraints" class="anchor" href="#foreign-key-constraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Foreign Key Constraints</h2>
@@ -573,60 +534,6 @@
 <p>This will work totally fine.</p>
 
 <h1>
-<a id="commands" class="anchor" href="#commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commands</h1>
-
-<h2>
-<a id="jables" class="anchor" href="#jables" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables</h2>
-
-<pre><code>php artisan jables
-</code></pre>
-
-<p>Checks your JSON files then creates your Database Tables</p>
-
-<h2>
-<a id="jablescheck" class="anchor" href="#jablescheck" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:check</h2>
-
-<pre><code>php artisan jables:check
-</code></pre>
-
-<p>Checks your JSOn files and reports errors.</p>
-
-<h2>
-<a id="jablesrefresh" class="anchor" href="#jablesrefresh" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:refresh</h2>
-
-<pre><code>php artisan jables:refresh
-</code></pre>
-
-<p>Destroys all the tables then recreates them from your (possibly updated) json files.
-(warning. risk of data loss)</p>
-
-<h2>
-<a id="jablesdestroy" class="anchor" href="#jablesdestroy" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:destroy</h2>
-
-<pre><code>php artisan jables:destroy
-</code></pre>
-
-<p>Removes all the tables that jables created from Database.</p>
-
-<h2>
-<a id="jablescreate-table" class="anchor" href="#jablescreate-table" aria-hidden="true"><span class="octicon octicon-link"></span></a>jables:create-table</h2>
-
-<pre><code>php artisan jables:create-table
-</code></pre>
-
-<p>Creates Jables' own tracking table in database.</p>
-
-<h1>
-<a id="options-1" class="anchor" href="#options-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h1>
-
-<p>All commands just accept one option. That is the <code>--database=[connection]</code> option. You can use it to override which connection Jables uses to do its business.</p>
-
-<p>example</p>
-
-<pre><code>php artisan jables --database=memory
-</code></pre>
-
-<h1>
 <a id="documenting-tables" class="anchor" href="#documenting-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documenting Tables</h1>
 
 <p>All field and table definitions accept <code>title</code> and <code>description</code> properties that can be used to document your database schema.</p>
@@ -646,6 +553,38 @@
         }
     }
 }</pre></div>
+
+<h1>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h1>
+
+<p>Jables usually works right out of the box with no configuration required, but two option does exist.</p>
+
+<p>First publish the configuration files. with</p>
+
+<pre><code>php artisan vendor:publish
+</code></pre>
+
+<p>after running that a <code>jables.php</code> should show up in your <code>config</code> folder with the following contents...</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">return</span> [</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>table<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>folder<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>jables<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">];</span></pre></div>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<ul>
+<li>
+<code>table</code> - The name of the special table jables creates for tracking.</li>
+<li>
+<code>folder</code> - The name of the folder within which you store your table schemas. The name is relative to your Laravel installation's <code>database</code> folder.</li>
+</ul>
+
+<blockquote>
+<p>It is recommend that you store your schema in a folder within your application's <code>database</code> folder.</p>
+</blockquote>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Hedronium/Jables">Jables</a> is maintained by <a href="https://github.com/Hedronium">Hedronium</a>.</span>
