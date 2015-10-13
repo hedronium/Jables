@@ -41,10 +41,10 @@ and check to see if the `jables` command and the `jables` section shows up.
 # Usage
 ## Commands
 `artisan jables` - Checks your JSON files then creates your Database Tables  
-`artisan jables:check` - Checks your JSOn files and reports errors.  
-`artisan jables:refresh` - Destroys all the tables then recreates them from your (possibly updated) json files. (warning. risk of data loss)  
+`artisan jables:check` - Checks your JSON files and reports errors.  
+`artisan jables:refresh` - Destroys all the tables then recreates them from your (possibly updated) JSON files. (warning. risk of data loss)  
 `artisan jables:destroy` - Removes all the tables that jables created from  Database.
-`jables:create-table` - Creates Jables' own tracking table in database.  
+`jables:create-table` - Creates Jables own tracking table in database.  
 
 All the commands accept the  `--database=[connection]` option. You can use it to override which connection Jables uses to do its business.
 
@@ -91,7 +91,7 @@ Heres a list
 - [decimal](#decimal)
 - [double](#double)
 - [enum](#enum)
-- [float](#fltoat)
+- [float](#float)
 - [integer](#integer)
 - [json](#json)
 - [jsonb](#jsonb)
