@@ -41,19 +41,18 @@
 <h1>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
 
-<ul>
-<li>[x] Schema in JSON</li>
-<li>[x] Laravel Integration</li>
-<li>[x] All Laravel Field Types supported.</li>
-<li>[x] Checking JSON Syntax</li>
-<li>[x] Checking Foreign key References.</li>
-<li>[x] Checking Unique key Constraints.</li>
-<li>[x] Automatic Table Deconstruction</li>
-<li>[ ] JSON Syntax Prettifyer</li>
-<li>[ ] Schema Diff (build changes not complete reconstructions)</li>
-<li>[ ] Automatic Documentation Builder</li>
-<li>[ ] JSON to Migration Transpiler</li>
-</ul>
+✓ Schema in JSON<br>
+✓ Laravel Integration<br>
+✓ All Laravel Field Types supported.<br>
+✓ Checking JSON Syntax<br>
+✓ Checking Foreign key References.<br>
+✓ Checking Unique key Constraints.<br>
+✓ Automatic Table Deconstruction<br>
+<br>
+○ JSON Syntax Prettifyer<br>
+○ Schema Diff (build changes not complete reconstructions)<br>
+○ Automatic Documentation Builder<br>
+○ JSON to Migration Transpiler<br>
 
 <h1>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
@@ -90,7 +89,8 @@
 <code>artisan jables:check</code> - Checks your JSOn files and reports errors.<br>
 <code>artisan jables:refresh</code> - Destroys all the tables then recreates them from your (possibly updated) json files. (warning. risk of data loss)<br>
 <code>artisan jables:destroy</code> - Removes all the tables that jables created from  Database.
-<code>jables:create-table</code> - Creates Jables' own tracking table in database.  </p>
+<code>artisan jables:create-folder</code> - Creates the folder to store your Schema based on your configuration.  </p>
+<code>artisan jables:create-table</code> - Creates Jables' own tracking table in database.  </p>
 
 <p>All the commands accept the  <code>--database=[connection]</code> option. You can use it to override which connection Jables uses to do its business.</p>
 
