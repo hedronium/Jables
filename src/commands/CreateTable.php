@@ -2,10 +2,11 @@
 namespace hedronium\Jables\commands;
 
 use hedronium\Jables\Runner;
+use hedronium\Jables\Command;
 
 class CreateTable extends Command
 {
-	use CreatesTable;
+	use traits\CreatesTable;
 
 	protected $signature = 'jables:create-table {--database=}';
 	protected $description = 'Creates a database table for tracking.';

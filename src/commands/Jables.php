@@ -3,12 +3,13 @@ namespace hedronium\Jables\commands;
 
 use hedronium\Jables\Runner;
 use hedronium\Jables\Checker;
+use hedronium\Jables\Command;
 
 class Jables extends Command
 {
-	use Checks;
-	use CreatesTable;
-	use Creates;
+	use traits\Checks;
+	use traits\CreatesTable;
+	use traits\Creates;
 
 	protected $signature = 'jables {--database=}';
 	protected $description = 'Creates database tables from jable schema.';

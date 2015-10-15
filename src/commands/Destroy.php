@@ -3,10 +3,11 @@ namespace hedronium\Jables\commands;
 
 use Illuminate\Database\DatabaseManager;
 use hedronium\Jables\Destroyer;
+use hedronium\Jables\Command;
 
 class Destroy extends Command
 {
-	use Destroys;
+	use traits\Destroys;
 
 	protected $signature = 'jables:destroy {--database=}';
 	protected $description = 'Removes all tables that jables created from database.';

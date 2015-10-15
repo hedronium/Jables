@@ -1,5 +1,5 @@
 <?php
-namespace hedronium\Jables\commands;
+namespace hedronium\Jables\commands\traits;
 
 trait Destroys {
 	public function destroy()

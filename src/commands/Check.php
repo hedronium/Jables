@@ -2,10 +2,11 @@
 namespace hedronium\Jables\commands;
 
 use \hedronium\Jables\Checker;
+use \hedronium\Jables\Command;
 
 class Check extends Command
 {
-	use Checks;
+	use traits\Checks;
 
 	protected $signature = 'jables:check';
 	protected $description = 'Checks the Schema files for inconsistencies.';

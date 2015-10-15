@@ -1,8 +1,7 @@
 <?php
-namespace hedronium\Jables\commands;
+namespace hedronium\Jables;
 
 use Illuminate\Console\Command as LaravelCommand;
-use hedronium\Jables\Jables;
 
 class Command extends LaravelCommand {
 	public function __construct()

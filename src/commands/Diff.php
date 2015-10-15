@@ -1,6 +1,8 @@
 <?php
 namespace hedronium\Jables\commands;
 
+use hedronium\Jables\Command;
+
 class Diff extends Command
 {
 	protected $signature = 'jables:diff';

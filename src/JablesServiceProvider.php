@@ -54,6 +54,10 @@ class JablesServiceProvider extends ServiceProvider
 			return new commands\CreateTable($app['jables.runner']);
 		});
 
+		$this->app['jables.commands.create-folder'] = $this->app->share(function($app){
+			return new commands\CreateFolder($app, $app['files']);
+		});
+
 		$this->app['jables.commands.prettify'] = $this->app->share(function($app){
 			return new commands\Prettify();
 		});
@@ -72,6 +76,7 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.destroy',
 			// 'jables.commands.diff',
 			'jables.commands.create-table',
+			'jables.commands.create-folder',
 			// 'jables.commands.prettify',
 		]);
 	}
@@ -87,7 +92,8 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.destroy',
 			'jables.commands.diff',
 			'jables.commands.create-table',
-			'jables.commands.prettify'
+			'jables.commands.create-folder',
+			'jables.commands.prettify',
 		];
 	}
 }

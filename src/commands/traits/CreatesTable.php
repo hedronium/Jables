@@ -1,5 +1,5 @@
 <?php
-namespace hedronium\Jables\commands;
+namespace hedronium\Jables\commands\traits;
 
 trait CreatesTable {
 	public function createTable($connection = null)

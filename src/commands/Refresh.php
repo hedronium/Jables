@@ -4,13 +4,14 @@ namespace hedronium\Jables\commands;
 use hedronium\Jables\Checker;
 use hedronium\Jables\Runner;
 use hedronium\Jables\Destroyer;
+use hedronium\Jables\Command;
 
 class Refresh extends Command
 {
-	use Checks;
-	use Destroys;
-	use CreatesTable;
-	use Creates;
+	use traits\Checks;
+	use traits\Destroys;
+	use traits\CreatesTable;
+	use traits\Creates;
 
 	protected $signature = 'jables:refresh {--database=}';
 	protected $description = 'Removes and re-creates the tables in database.';
