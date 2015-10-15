@@ -4,17 +4,19 @@
 Write your Database Schema in JSON, with clean naming conventions and store them nicely in Version Control.
 
 # Features
-- [x] Schema in JSON
-- [x] Laravel Integration
-- [x] All Laravel Field Types supported.
-- [x] Checking JSON Syntax
-- [x] Checking Foreign key References.
-- [x] Checking Unique key Constraints.
-- [x] Automatic Table Deconstruction
-- [ ] JSON Syntax Prettifyer
-- [ ] Schema Diff (build changes not complete reconstructions)
-- [ ] Automatic Documentation Builder
-- [ ] JSON to Migration Transpiler
+✓ Schema in JSON  
+✓ Laravel Integration  
+✓ All Laravel Field Types supported.  
+✓ Checking JSON Syntax  
+✓ Checking Foreign key References.  
+✓ Checking Unique key Constraints.  
+✓ Automatic Table Deconstruction  
+
+
+□ JSON Syntax Prettifyer  
+□ Schema Diff (build changes not complete reconstructions)  
+□ Automatic Documentation Builder  
+□ JSON to Migration Transpiler  
 
 # Installation
 Grab it through Composer.
