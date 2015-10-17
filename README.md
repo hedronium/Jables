@@ -10,10 +10,9 @@ Write your Database Schema in JSON, with clean naming conventions and store them
 ✓ Checking JSON Syntax  
 ✓ Checking Foreign key References.  
 ✓ Checking Unique key Constraints.  
-✓ Automatic Table Deconstruction  
+✓ Automatic Table Deconstruction.  
+✓ JSON Syntax Prettifyer 
 
-
-□ JSON Syntax Prettifyer  
 □ Schema Diff (build changes not complete reconstructions)  
 □ Automatic Documentation Builder  
 □ JSON to Migration Transpiler  
@@ -48,6 +47,7 @@ and check to see if the `jables` command and the `jables` section shows up.
 `php artisan jables:destroy` - Removes all the tables that jables created from  Database.  
 `php artisan jables:create-folder` - Creates the folder to store your Schema based on your configuration.  
 `php artisan jables:create-table` - Creates Jables own tracking table in database.  
+`php artisan jables:prettify` - Formats your JSON files and adds appropriate spacing for them to look nice.  
 
 All the commands accept the  `--database=[connection]` option. You can use it to override which connection Jables uses to do its business.
 

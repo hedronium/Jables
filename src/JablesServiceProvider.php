@@ -17,6 +17,10 @@ class JablesServiceProvider extends ServiceProvider
 			return new Checker($app, $app['files']);
 		});
 
+		$this->app->singleton('jables.prettifyer', function($app){
+			return new Prettifyer($app, $app['files']);
+		});
+
 		$this->app->singleton('jables.runner', function($app){
 			return new Runner($app, $app['files'], $app['db']);
 		});
@@ -59,7 +63,7 @@ class JablesServiceProvider extends ServiceProvider
 		});
 
 		$this->app['jables.commands.prettify'] = $this->app->share(function($app){
-			return new commands\Prettify();
+			return new commands\Prettify($app['jables.checker'], $app['jables.prettifyer']);
 		});
 	}
 
@@ -77,7 +81,7 @@ class JablesServiceProvider extends ServiceProvider
 			// 'jables.commands.diff',
 			'jables.commands.create-table',
 			'jables.commands.create-folder',
-			// 'jables.commands.prettify',
+			'jables.commands.prettify',
 		]);
 	}
 
