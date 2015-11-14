@@ -13,16 +13,20 @@ class JablesServiceProvider extends ServiceProvider
 			__DIR__.'/config/jables.php', 'jables'
 		);
 
+		$this->app->singleton('jables.loader', function($app){
+			return new Loader($app, $app['files']);
+		});
+
 		$this->app->singleton('jables.checker', function($app){
-			return new Checker($app, $app['files']);
+			return new Checker($app, $app['files'], $app['jables.loader']);
 		});
 
 		$this->app->singleton('jables.prettifyer', function($app){
-			return new Prettifyer($app, $app['files']);
+			return new Prettifyer($app, $app['files'], $app['jables.loader']);
 		});
 
 		$this->app->singleton('jables.runner', function($app){
-			return new Runner($app, $app['files'], $app['db']);
+			return new Runner($app, $app['files'], $app['db'], $app['jables.loader']);
 		});
 
 		$this->app->singleton('jables.destroyer', function($app){

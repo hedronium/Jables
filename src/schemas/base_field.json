@@ -10,7 +10,7 @@
 			"type": "string"
 		},
 		"description": {
-			"type": "string"
+			"type": "integer"
 		},
 		"primary": {
 			"type": "boolean"

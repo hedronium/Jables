@@ -9,6 +9,7 @@ class Checker
 	protected $fs = null;
 	protected $app = null;
 	protected $parser = null;
+	protected $loader = null;
 
 	protected $schema_retriever = null;
 	protected $schema_validator = null;
@@ -48,10 +49,11 @@ class Checker
 		return $this->files;
 	}
 
-	public function __construct ($app, Filesystem $fs)
+	public function __construct ($app, Filesystem $fs, Loader $loader)
 	{
 		$this->fs = $fs;
 		$this->app = $app;
+		$this->loader = $loader;
 
 		$this->parser = new JsonParser();
 		$this->schema_retriever = new \JsonSchema\Uri\UriRetriever;
@@ -69,7 +71,7 @@ class Checker
 			return $this->datas[$file];
 		}
 
-		$data = $parser->parse($this->fs->get($file));
+		$data = $parser->parse($this->loader->get($file));
 		$this->datas[$file] = $data;
 
 		return $data;

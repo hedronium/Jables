@@ -8,13 +8,15 @@ class Prettifyer
 {
 	protected $app = null;
 	protected $fs = null;
+	protected $loader = null;
 
 	protected $files= [];
 
-	public function __construct($app, Filesystem $fs)
+	public function __construct($app, Filesystem $fs, Loader $loader)
 	{
 		$this->app = $app;
 		$this->fs = $fs;
+		$this->loader = $loader;
 
 		$path = $this->app->databasePath().'/'.config('jables.folder');
 

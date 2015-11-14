@@ -12,6 +12,7 @@ class Runner
 	protected $db_manager = null;
 	protected $db = null;
 	protected $parser = null;
+	protected $loader = null;
 
 	protected $tables = [];
 	protected $types = [];
@@ -25,16 +26,17 @@ class Runner
 
 		foreach ($files as $file) {
 			if ($this->fs->extension($file) == 'json') {
-				$this->tables[$this->fs->name($file)] = $this->parser->parse($this->fs->get($file)); 
+				$this->tables[$this->fs->name($file)] = $this->parser->parse($this->loader->get($file)); 
 			}
 		}
 	}
 
-	public function __construct($app, Filesystem $fs, DatabaseManager $db)
+	public function __construct($app, Filesystem $fs, DatabaseManager $db, Loader $loader)
 	{
 		$this->app = $app;
 		$this->fs = $fs;
 		$this->db_manager = $db;
+		$this->loader = $loader;
 		$this->parser = new JsonParser;
 
 		$this->buildTableList();
