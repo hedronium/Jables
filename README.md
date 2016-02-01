@@ -43,7 +43,7 @@ and check to see if the `jables` command and the `jables` section shows up.
 ## Commands
 `php artisan jables` - Checks your JSON files then creates your Database Tables  
 `php artisan jables:check` - Checks your JSON files and reports errors.  
-`php artisan jables:refresh` - Destroys all the tables then recreates them from your (possibly updated) JSON files. (warning. risk of data loss)  
+`php artisan jables:refresh` - Destroys all the tables then recreates them from your (possibly updated) JSON files. (warning: risk of data loss)  
 `php artisan jables:destroy` - Removes all the tables that jables created from  Database.  
 `php artisan jables:create-folder` - Creates the folder to store your Schema based on your configuration.  
 `php artisan jables:create-table` - Creates Jables own tracking table in database.  
