@@ -176,7 +176,7 @@ class Checker
 		$fields = $table_data->fields;
 
 		foreach ($fields as $name => $field) {
-			if ($name === 'timestamps') {
+			if ($name === 'timestamps' || $name === 'soft-deletes') {
 				continue;
 			}
 

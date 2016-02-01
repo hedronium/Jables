@@ -7,10 +7,13 @@
 		"fields": {
 			"type": "object",
 			"patternProperties": {
+				"^soft-deletes$": {
+					"type": "boolean"
+				},
 				"^timestamps$": {
 					"type": "boolean"
 				},
-				"^(?!timestamps).*$": {
+				"^(?!timestamps|soft-deletes).*$": {
 					"type": "object",
 					"properties": {
 						"type": {"$ref": "field_type.json#/type"}
