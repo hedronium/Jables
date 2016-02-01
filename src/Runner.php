@@ -192,6 +192,8 @@ class Runner
 				
 				if ($name === 'timestamps') {
 					$table->timestamps();
+				} elseif ($name === 'soft-deletes') {
+					$table->softDeletes();
 				} else {
 					$this->field($table, $name, $field);
 

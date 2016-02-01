@@ -12,9 +12,10 @@ Write your Database Schema in JSON, with clean naming conventions and store them
 ✓ Checking Unique key Constraints.  
 ✓ Automatic Table Deconstruction.
 
-□ Schema Diff (build changes not complete reconstructions)  
-□ Automatic Documentation Builder  
-□ JSON to Migration Transpiler  
+Soon to come:
+- Schema Diff (build changes not complete reconstructions)  
+- Automatic Documentation Builder  
+- JSON to Migration Transpiler
 
 # Installation
 Grab it through Composer.
@@ -347,6 +348,25 @@ Like:
             ]
         },
         "timestamps": true
+    }
+}
+```
+
+## softDeletes
+Same with softDeletes.
+Create a special `soft-deletes` property in yours `fields` object and set it to true.
+
+Like:
+```JSON
+{
+    "fields": {
+        "user_id": {
+            "type": "integer",
+            "attributes": [
+                "unsigned"
+            ]
+        },
+        "soft-deletes": true
     }
 }
 ```
