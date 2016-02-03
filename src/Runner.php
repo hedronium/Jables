@@ -38,8 +38,6 @@ class Runner
 		$this->db_manager = $db;
 		$this->loader = $loader;
 		$this->parser = new JsonParser;
-
-		$this->buildTableList();
 	}
 
 	public function createTable()
@@ -186,6 +184,8 @@ class Runner
 
 	public function up()
 	{
+		$this->buildTableList();
+		
 		$creator = function(Blueprint $table, $table_name, $definition, $uniques){
 			
 			foreach ($definition->fields as $name=>$field) {
