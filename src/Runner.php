@@ -31,6 +31,10 @@ class Runner
 		}
 	}
 
+	/**
+	 *  Injecting FileSystem , DatabaseManager and loader Class
+	 */
+
 	public function __construct($app, Filesystem $fs, DatabaseManager $db, Loader $loader)
 	{
 		$this->app = $app;
@@ -39,6 +43,8 @@ class Runner
 		$this->loader = $loader;
 		$this->parser = new JsonParser;
 	}
+
+	
 
 	public function createTable()
 	{
