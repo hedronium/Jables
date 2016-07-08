@@ -1,10 +1,23 @@
 <?php
 namespace hedronium\Jables\commands\traits;
 
+/*
+ All kind's of checks methods are implemeted in this class
+*/
+
 trait Checks {
+
+	/**
+	 *  When a check method is called .. it start checking by calling methods from checker class in root of
+	 *  the folder
+	 */
+
+
 	public function check()
 	{
 		$this->info('Checking for JSON syntax Errors...');
+
+		// Calling to syntax error 
 		$errors = $this->checker->syntaxError();
 
 		if ($errors !== null) {

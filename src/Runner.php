@@ -44,7 +44,8 @@ class Runner
 		$this->parser = new JsonParser;
 	}
 
-	
+
+
 
 	public function createTable()
 	{
@@ -56,16 +57,23 @@ class Runner
 			return null;
 		}
 
-		$builder->create($table, function(Blueprint $table){
+		$builder->create($table, function(Blueprint $table) {
+
 			$table->increments('id');
 			$table->longText('data');
 
 			$table->timestamps();
+
 		});
 
 		return true;
 	}
 
+	/**
+	 * Create database connection
+	 * @param  $connection 
+	 * 
+	 */
 	public function connection($connection = null)
 	{
 		$this->db = $this->db_manager->connection($connection);

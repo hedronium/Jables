@@ -21,6 +21,7 @@ class Checker
 	protected $datas = [];
 
 	protected $refference_checks = [
+
 		'integer' => ['attributes'],
 		'big-integer' => 'integer',
 		'medium-integer' => 'integer',
@@ -31,6 +32,7 @@ class Checker
 		'decimal' => ['digits', 'prescision'],
 		'double' => 'decimal',
 		'enum' => ['values']
+	
 	];
 
 	protected function buildFileList()
@@ -48,7 +50,7 @@ class Checker
 	{
 		return $this->files;
 	}
-
+	
 	public function __construct ($app, Filesystem $fs, Loader $loader)
 	{
 		$this->fs = $fs;

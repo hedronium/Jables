@@ -16,13 +16,20 @@ class Jables extends Command
 
 	protected $runner = null;
 	protected $checker = null;
-
+	
 	public function __construct(Runner $runner, Checker $checker)
 	{
 		parent::__construct();
 		$this->checker = $checker;
 		$this->runner = $runner;
 	}
+
+	/**
+	 *  handle method called the check method from the check trait , then handle method returns result 
+	 *  boolean value depends on the jables files. 
+	 *
+	 *  This just a method that calls for checks
+	 */
 
 	public function handle()
 	{

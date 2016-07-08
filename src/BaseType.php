@@ -9,6 +9,7 @@ abstract class BaseType {
 	protected $table = null;
 	protected $field = null;
 
+	
 	public function setName($name)
 	{
 		$this->name = $name;
