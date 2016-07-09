@@ -35,6 +35,10 @@ class Checker
 	
 	];
 
+	/**
+	 * This method just build file list and put it into the $this->files
+	 * @return []
+	 */
 	protected function buildFileList()
 	{
 		$files = $this->fs->files($this->app->databasePath().'/'.config('jables.folder'));
@@ -46,11 +50,20 @@ class Checker
 		}
 	}
 
+	/**
+	 * Get all files from $this->files
+	 * @return [array] $this->files
+	 */
 	public function getFileList()
 	{
 		return $this->files;
 	}
 	
+	/**
+	 *  Dependency Filesystem and loader injected into class 
+	 *  it intialize other dependencies and then it create a file list and store it to $this->file
+	 */
+
 	public function __construct ($app, Filesystem $fs, Loader $loader)
 	{
 		$this->fs = $fs;
@@ -79,6 +92,11 @@ class Checker
 		return $data;
 	}
 
+	/**
+	 * It loads the schema from the inserted file and returns schema
+	 * @param  [string][File name]
+	 * @return [type]
+	 */
 	protected function loadSchema($file)
 	{
 		if (isset($this->schemas[$file])) {
@@ -116,6 +134,12 @@ class Checker
 		return $name;
 	}
 
+	/**
+	 * $files contains 
+	 * it itterets every file from jables folder to read . then during the itteration it call loadData()
+	 * method , after the load data method returns its results default  
+	 * @return Exeption or null
+	 */
 	public function syntaxError()
 	{
 		foreach ($this->files as $i => $file) {

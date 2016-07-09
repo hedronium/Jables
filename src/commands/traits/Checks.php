@@ -17,9 +17,10 @@ trait Checks {
 	{
 		$this->info('Checking for JSON syntax Errors...');
 
-		// Calling to syntax error 
+		// Calling to json syntax error 
 		$errors = $this->checker->syntaxError();
 
+		// if find any error it will jump to next valiation check
 		if ($errors !== null) {
 			$this->error($errors);
 			return false;
