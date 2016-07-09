@@ -78,6 +78,7 @@ class Checker
 		$this->buildFileList();
 	}
 
+
 	protected function loadData($file)
 	{
 		$parser = $this->parser;
@@ -93,7 +94,13 @@ class Checker
 	}
 
 	/**
-	 * It loads the schema from the inserted file and returns schema
+	 * It loads the schema from the inserted file
+	 * then then it compare schema with the .json files in the schema folder
+	 * and it stores the schema in the $this->schemas[] with a index of that
+	 * file.
+	 *
+	 * if the schema is found the method will return the schema followed by the index or else
+	 * it will retrive schema
 	 * @param  [string][File name]
 	 * @return [type]
 	 */
@@ -117,6 +124,7 @@ class Checker
 		return $schema;
 	}
 
+	
 	protected function getName($file, $ext = false)
 	{
 		if (isset($this->names[$file])) {
@@ -145,6 +153,7 @@ class Checker
 		foreach ($this->files as $i => $file) {
 			try {
 				$this->loadData($file);
+
 			} catch (\Exception $e) {
 				$message = $this->fs->name($file).'.json, '.$e->getMessage();
 
@@ -154,6 +163,7 @@ class Checker
 
 		return null;
 	}
+
 
 	protected function fieldSchematicLimitError($table_name, $field_name, $field_schema, $field_data)
 	{
@@ -290,6 +300,7 @@ class Checker
 			$table_name = $this->getName($file);
 
 			foreach ($table->fields as $field_name => $field) {
+
 				$fields[$table_name.'.'.$field_name] = $field;
 
 				if (isset($field->foreign)) {
