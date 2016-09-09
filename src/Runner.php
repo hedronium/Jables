@@ -20,17 +20,6 @@ class Runner
 
 	protected $app = null;
 
-	protected function buildTableList()
-	{
-		$files = $this->fs->files($this->app->databasePath().'/'.config('jables.folder'));
-
-		foreach ($files as $file) {
-			if ($this->fs->extension($file) == 'json') {
-				$this->tables[$this->fs->name($file)] = $this->parser->parse($this->loader->get($file)); 
-			}
-		}
-	}
-
 	public function __construct($app, Filesystem $fs, DatabaseManager $db, Loader $loader)
 	{
 		$this->app = $app;
@@ -169,12 +158,12 @@ class Runner
 		foreach ($this->foreigns as $table => $foreigns) {
 			$table_name = $table;
 			$builder->table($table, function($table) use ($foreigns, $table_name) {
-				
+
 				foreach ($foreigns as $field => $foreign) {
-					
+
 					list($foreign_table, $foreign_field) = explode('.', $foreign);
 					$table->foreign($field)->references($foreign_field)->on($foreign_table);
-				
+
 				}
 
 			});
@@ -184,12 +173,10 @@ class Runner
 
 	public function up()
 	{
-		$this->buildTableList();
-		
 		$creator = function(Blueprint $table, $table_name, $definition, $uniques){
-			
-			foreach ($definition->fields as $name=>$field) {
-				
+
+			foreach ($definition->fields as $name => $field) {
+
 				if ($name === 'timestamps') {
 					$table->timestamps();
 				} elseif ($name === 'soft-deletes') {
@@ -213,8 +200,11 @@ class Runner
 
 		$creator->bindTo($this);
 
-		foreach ($this->tables as $name => $definition) {
+		$tables = [];
 
+		foreach ($this->loader->names() as $name) {
+			$definition = $this->loader->get($name);
+			$tables[$name] = $definition;
 			$builder = $this->db->getSchemaBuilder();
 
 			$this->foreigns[$name] = [];
@@ -224,13 +214,13 @@ class Runner
 			}
 
 			$uniques = [];
-			
+
 			if (isset($definition->unique)) {
 				$uniques = (array) $definition->unique;
 			}
 
 			$builder->create($name, function(Blueprint $table) use ($creator, $name, $definition, $uniques){
-				
+
 				$creator($table, $name, $definition, $uniques);
 
 			});
@@ -239,7 +229,7 @@ class Runner
 
 		$log = new JablesTableModel();
 		$log->setConnection($this->db->getName());
-		$log->data = json_encode($this->tables);
+		$log->data = json_encode($tables);
 		$log->save();
 	}
 }

@@ -8,7 +8,7 @@ trait CreatesTable {
 		$this->runner->connection($connection);
 
 		if ($this->runner->createTable() === null) {
-			$this->info('Tracker table already created.');
+			$this->info('Tracker table already exists.');
 			return;
 		}
 

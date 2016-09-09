@@ -3,11 +3,11 @@ namespace hedronium\Jables\commands;
 
 use hedronium\Jables\Runner;
 use hedronium\Jables\Checker;
+use hedronium\Jables\Loader;
 use hedronium\Jables\Command;
 
 class Jables extends Command
 {
-	use traits\Checks;
 	use traits\CreatesTable;
 	use traits\Creates;
 
@@ -17,19 +17,17 @@ class Jables extends Command
 	protected $runner = null;
 	protected $checker = null;
 
-	public function __construct(Runner $runner, Checker $checker)
+	public function __construct(Runner $runner, Loader $loader)
 	{
 		parent::__construct();
-		$this->checker = $checker;
+
 		$this->runner = $runner;
+		$this->loader = $loader;
 	}
 
 	public function handle()
 	{
-		if (!$this->check()) {
-			return false;
-		}
-		
+		$code = $this->call('jables:check');
 		$this->create();
 	}
 }

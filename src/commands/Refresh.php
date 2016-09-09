@@ -33,19 +33,7 @@ class Refresh extends Command
 
 	public function handle()
 	{
-		if (!$this->check()) {
-			$this->error("Does not check out. :(");
-			return;
-		}
-
-		if (!$this->destroy()) {
-			$this->error("Couldn't remove previous Tables.");
-			return;
-		}
-
-		if (!$this->create()) {
-			$this->error("Couldn't create Tables.");
-			return;
-		}
+		$this->call('jables:destroy');
+		$this->call('jables');
 	}
 }

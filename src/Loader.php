@@ -1,108 +1,110 @@
 <?php
 namespace hedronium\Jables;
 
+use Seld\JsonLint\JsonParser;
+use Symfony\Component\Yaml\Yaml;
+
 use Illuminate\Filesystem\Filesystem;
+
+use \hedronium\Jables\exceptions\ParseException;
+use \hedronium\Jables\exceptions\NameCollisionException;
 
 class Loader
 {
 	protected $app = null;
 	protected $fs = null;
+	protected $extensions = [];
 
-	protected $datas = [];
+	protected $paths = [];
+	protected $names = [];
+
+	protected $parsed = [];
 
 	public function __construct($app, Filesystem $fs)
 	{
 		$this->app = $app;
 		$this->fs = $fs;
+
+		$json_parser = new JsonParser();
+
+		$this->extensions = [
+			'json' => function ($raw) use ($json_parser) {
+				$parsed = $json_parser->parse($raw);
+				return $parsed;
+			},
+			'yml' => function ($raw) {
+				$parsed = Yaml::parse($raw, false, false, true);
+				return $parsed;
+			}
+		];
+
+		$this->index();
+		$this->parse();
 	}
 
-	protected function sanitize($data)
+	public function names()
 	{
-		// Match all the "description" keys with string values
-		$matches = [];
-		$pattern = '/"description"\:\s*"/';
-		preg_match_all($pattern, $data, $matches, PREG_OFFSET_CAPTURE);
+		return $this->names;
+	}
 
-		$total_len = strlen($data);
+	public function paths()
+	{
+		return $this->paths;
+	}
 
-		// stores descriptions
-		$descs = [];
+	public function path($name)
+	{
+		return $this->paths[$name];
+	}
 
-		$new_str = "";
-		$pos = 0;
+	public function get($name)
+	{
+		return $this->parsed[$name];
+	}
 
-		foreach ($matches[0] as $i => list($match, $offset)) {
-			$length = strlen($match);
-			$ex = $pos;
-			$pos = $offset+$length;
+	public function parse()
+	{
+		foreach ($this->paths as $name => $path) {
+			$ext = $this->fs->extension($path);
+			$raw = $this->fs->get($path);
 
-			// While position does not exceed the total length
-			while ($pos < $total_len) {
-				$pos = strpos($data, '"', $pos+1);
-				
-				if ($pos === false) {
-					throw new \Exception('Something Horibly wrong with the JSON.');
-				}
+			try {
+				$this->parsed[$name] = $this->extensions[$ext]($raw);
+			} catch (\Seld\JsonLint\ParsingException $e) {
+				throw new ParseException($name, $path, $e->getMessage());
+			}
+		}
+	}
 
-				$backcheck = $pos;
-				$slashes = 0;
+	public function index($dir = 'jables')
+	{
+		$files = $this->fs->allFiles($this->app->databasePath().'/'.$dir);
 
-				while ($backcheck > 0) {
-					$backcheck--;
+		$paths = [];
+		$names = [];
 
-					if ($data[$backcheck] === "\\") {
-						$slashes++;
-					} else {
-						break;
-					}
-				}
-
-				// If there are an odd number of slashes
-				// meaning the quote was escaped.
-				if ($slashes&1 === 1) {
-					continue;
-				} else {
-					// set position 1 past the following comma
-					// to cancel it out
-					// or to the next closing curly brace.
-					$next_comma = strpos($data, ',', $pos);
-					$next_brace = strpos($data, '}', $pos);
-
-					if ($next_comma === false) {
-						$pos = $next_brace;
-					} elseif ($next_brace === false) {
-						$pos = $next_comma;
-					} elseif ($next_comma < $next_brace) {
-						$pos = $next_comma;
-					} else {
-						$pos = $next_brace;
-					}
-
-					break;
-				}
+		foreach ($files as $file) {
+			if (!isset($this->extensions[$file->getExtension()])) {
+				continue;
 			}
 
-			$new_str.= substr($data, $ex, $offset-$ex);
-			$new_str.= '"description": '.$i;
+			$table_name = $this->fs->name($file->getRealPath());
 
-			$descs[] = preg_replace('/ {2,}/', ' ', trim(
-				substr(
-					$data, $offset+$length, $pos-$offset-$length
-				)
-			));
+			if (isset($paths[$table_name])) {
+
+				throw new NameCollisionException(
+					$paths[$table_name],
+					$file->getRealPath()
+				);
+
+
+			} else {
+				$paths[$table_name] = $file->getRealPath();
+				$names[] = $table_name;
+			}
 		}
 
-		return $new_str.substr($data, $pos);
-	}
-
-	public function get($file)
-	{
-		if (isset($datas[$file])) {
-			return $datas[$file];
-		}
-
-		$data = $this->fs->get($file);
-
-		return $datas[$file] = $this->sanitize($data);
+		$this->paths = $paths;
+		$this->names = $names;
 	}
 }

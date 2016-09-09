@@ -52,7 +52,7 @@
 			"type": "string"
 		},
 		"description": {
-			"type": "integer"
+			"type": "string"
 		}
 	},
 	"required": ["fields"]

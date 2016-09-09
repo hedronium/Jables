@@ -4,6 +4,9 @@ namespace hedronium\Jables;
 use Illuminate\Filesystem\Filesystem;
 use Seld\JsonLint\JsonParser;
 
+use \hedronium\Jables\exceptions\ParseException;
+use \hedronium\Jables\exceptions\SchemaException;
+
 class Checker
 {
 	protected $fs = null;
@@ -33,17 +36,6 @@ class Checker
 		'enum' => ['values']
 	];
 
-	protected function buildFileList()
-	{
-		$files = $this->fs->files($this->app->databasePath().'/'.config('jables.folder'));
-
-		foreach ($files as $file) {
-			if ($this->fs->extension($file) == 'json') {
-				$this->files[] = $file; 
-			}
-		}
-	}
-
 	public function getFileList()
 	{
 		return $this->files;
@@ -55,26 +47,12 @@ class Checker
 		$this->app = $app;
 		$this->loader = $loader;
 
+		$this->files = array_values($loader->paths());
+
 		$this->parser = new JsonParser();
 		$this->schema_retriever = new \JsonSchema\Uri\UriRetriever;
 		$this->schema_resolver = new \JsonSchema\RefResolver($this->schema_retriever);
 		$this->schema_validator = new \JsonSchema\Validator;
-
-		$this->buildFileList();
-	}
-
-	protected function loadData($file)
-	{
-		$parser = $this->parser;
-
-		if (isset($this->datas[$file])) {
-			return $this->datas[$file];
-		}
-
-		$data = $parser->parse($this->loader->get($file));
-		$this->datas[$file] = $data;
-
-		return $data;
 	}
 
 	protected function loadSchema($file)
@@ -95,38 +73,6 @@ class Checker
 		$this->schemas[$file] = $schema;
 
 		return $schema;
-	}
-
-	protected function getName($file, $ext = false)
-	{
-		if (isset($this->names[$file])) {
-			return $this->names[$file];
-		}
-
-		$name = $this->fs->name($file);
-
-		if ($ext) {
-			$name .= '.json';
-		}
-
-		$this->names[$file] = $name;
-
-		return $name;
-	}
-
-	public function syntaxError()
-	{
-		foreach ($this->files as $i => $file) {
-			try {
-				$this->loadData($file);
-			} catch (\Exception $e) {
-				$message = $this->fs->name($file).'.json, '.$e->getMessage();
-
-				return $message;
-			}
-		}
-
-		return null;
 	}
 
 	protected function fieldSchematicLimitError($table_name, $field_name, $field_schema, $field_data)
@@ -212,24 +158,23 @@ class Checker
 		$errors = [];
 
 		$validator = $this->schema_validator;
-
 		$table_schema = $this->loadSchema('table.json');
 
-		foreach ($this->files as $i => $file) {
-			$table_name = $this->fs->name($file);
-			$table_data = $this->loadData($file);
+		foreach ($this->loader->names() as $table_name) {
+			$table_data = $this->loader->get($table_name);
 			$validator->check($table_data, $table_schema);
 
 			if (!$validator->isValid()) {
 				foreach ($validator->getErrors() as $error) {
 					$errors[] = [
 						'table' => $table_name,
-						'proterty' => $error['property'],
+						'path' => $this->loader->path($table_name),
+						'property' => $error['property'],
 						'message' => $error['message']
 					];
 				}
 
-				return $errors;
+				throw new SchemaException($errors);
 			}
 
 			if ($field_errors = $this->fieldSchematicError($table_name, $table_data)) {
