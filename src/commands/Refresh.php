@@ -13,7 +13,7 @@ class Refresh extends Command
 	use traits\CreatesTable;
 	use traits\Creates;
 
-	protected $signature = 'jables:refresh {--database=}';
+	protected $signature = 'jables:refresh {--database=} {--engine=}';
 	protected $description = 'Removes and re-creates the tables in database.';
 
 	protected $app = null;
@@ -34,6 +34,8 @@ class Refresh extends Command
 	public function handle()
 	{
 		$this->call('jables:destroy');
-		$this->call('jables');
+		$this->call('jables', [
+			'--engine' => $this->option('engine')
+		]);
 	}
 }

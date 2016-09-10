@@ -171,9 +171,12 @@ class Runner
 		}
 	}
 
-	public function up()
+	public function up($engine = null)
 	{
-		$creator = function(Blueprint $table, $table_name, $definition, $uniques){
+		$creator = function(Blueprint $table, $table_name, $definition, $uniques) use ($engine) {
+			if ($engine) {
+				$table->engine = $engine;
+			}
 
 			foreach ($definition->fields as $name => $field) {
 
