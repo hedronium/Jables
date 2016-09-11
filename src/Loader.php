@@ -59,7 +59,12 @@ class Loader
 
 	public function get($name)
 	{
-		return $this->parsed[$name];
+		return isset($this->parsed[$name]) ? $this->parsed[$name] : false;
+	}
+
+	public function exists($name)
+	{
+		return isset($this->parsed[$name]);
 	}
 
 	public function parse()

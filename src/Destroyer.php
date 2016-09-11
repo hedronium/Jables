@@ -15,31 +15,29 @@ class Destroyer
 	protected $model = null;
 
 	protected $tables = [];
+	protected $foreigns = [];
 
 
 
 	public function buildLists()
 	{
-		$model = JablesTableModel::orderBy('id', 'desc')->first();
+		$tables = JablesTableModel::orderBy('id', 'desc')->where('type', '=', 'table')->get();
 
-		if (!$model) {
-			return false;
+		foreach ($tables as $raw) {
+			$defs = json_decode($raw->data);
+
+			foreach ($defs as $table => &$x) {
+				$this->tables[] = $table;
+			}
 		}
 
-		$data = json_decode($model->data);
+		$foreigns = JablesTableModel::orderBy('id', 'desc')->where('type', '=', 'foreign')->get();
 
-		foreach ($data as $table_name => $table_definition) {
+		foreach ($foreigns as $raw) {
+			$defs = json_decode($raw->data);
 
-			$this->tables[$table_name] = [];
-
-			if (isset($table_definition->foreign)) {
-				$this->tables[$table_name] = $table_definition->foreign;
-			}
-
-			foreach ($table_definition->fields as $field_name => $field_definition) {
-				if (isset($field_definition->foreign)) {
-					$this->tables[$table_name][$field_name] = $field_definition->foreign;
-				}
+			foreach ($defs as $def) {
+				$this->foreigns[] = $def;
 			}
 		}
 
@@ -68,22 +66,23 @@ class Destroyer
 	{
 		$builder = $this->db->getSchemaBuilder();
 
-		if (!$builder->hasTable(config('jables.table')) || !$this->buildLists()) {
+		if (!$builder->hasTable(config('jables.table'))) {
 			return false;
 		}
 
-		foreach ($this->tables as $table_name => $foreigns) {
+		$this->buildLists();
 
-			$builder->table($table_name, function(Blueprint $table) use ($table_name, $foreigns) {
-				foreach ($foreigns as $field => $foreign) {
-					$table->dropForeign($table_name.'_'.$field.'_foreign');
-				}
+		foreach ($this->foreigns as $foreign) {
+			list($table_name) = explode('_', $foreign);
+
+			$builder->table($table_name, function(Blueprint $table) use ($table_name, $foreign) {
+				$table->dropForeign($foreign);
 			});
 
 		}
 
-		foreach ($this->tables as $table_name => $foreigns) {
-			$builder->dropIfExists($table_name);
+		foreach ($this->tables as $table) {
+			$builder->dropIfExists($table);
 		}
 
 		return true;

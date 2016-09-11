@@ -5,24 +5,26 @@ use hedronium\Jables\Runner;
 use hedronium\Jables\Checker;
 use hedronium\Jables\Loader;
 use hedronium\Jables\Command;
+use hedronium\Jables\DependencyResolver;
 
 class Jables extends Command
 {
 	use traits\CreatesTable;
 	use traits\Creates;
 
-	protected $signature = 'jables {--database=} {--engine=}';
+	protected $signature = 'jables {tables?*} {--database=} {--engine=} {--nodeps}';
 	protected $description = 'Creates database tables from jable schema.';
 
 	protected $runner = null;
-	protected $checker = null;
+	protected $dependency = null;
 
-	public function __construct(Runner $runner, Loader $loader)
+	public function __construct(Runner $runner, Loader $loader, DependencyResolver $dependency)
 	{
 		parent::__construct();
 
 		$this->runner = $runner;
 		$this->loader = $loader;
+		$this->dependency = $dependency;
 	}
 
 	public function create()
@@ -37,7 +39,27 @@ class Jables extends Command
 		$engine = $this->option('engine');
 
 		$this->info('Creating Database Tables...');
-		$this->runner->up($engine);
+
+		$tables = $this->argument('tables') ? $this->argument('tables') : [];
+		$tabs = $tables;
+		foreach ($tabs as $table) {
+			if ($this->loader->exists($table)) {
+				if (!$this->option('nodeps')) {
+					$deps = $this->dependency->resolveDependencyList($table);
+
+					foreach ($deps as $dep) {
+						$tables[] = $dep['to_table'];
+					}
+				}
+			} else {
+				throw new \Exception("$table definition doesn't exist.");
+			}
+		}
+
+		$command = $this;
+		$this->runner->up(array_unique($tables), $engine, function ($msg) use ($command) {
+			$command->error($msg);
+		});
 
 		$this->info('Creating Foreign Key Constraints...');
 		$this->runner->foreigns();

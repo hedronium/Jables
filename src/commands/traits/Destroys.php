@@ -8,7 +8,7 @@ trait Destroys {
 		$this->destroyer->connection($this->option('database'));
 
 		if (!$this->destroyer->destroyUserTables()) {
-			$this->error('Jables have not been run. Nothing to destroy.');
+			$this->comment('Jables have not been run. Nothing to destroy.');
 			return false;
 		}
 

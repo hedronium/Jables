@@ -41,6 +41,7 @@ class Runner
 
 		$builder->create($table, function(Blueprint $table){
 			$table->increments('id');
+			$table->enum('type', ['table', 'delta', 'foreign']);
 			$table->longText('data');
 
 			$table->timestamps();
@@ -155,23 +156,31 @@ class Runner
 	{
 		$builder = $this->db->getSchemaBuilder();
 
+		$created_foreigns = [];
+
 		foreach ($this->foreigns as $table => $foreigns) {
 			$table_name = $table;
-			$builder->table($table, function($table) use ($foreigns, $table_name) {
-
+			$builder->table($table, function($table) use ($foreigns, $table_name, $builder, &$created_foreigns) {
 				foreach ($foreigns as $field => $foreign) {
 
 					list($foreign_table, $foreign_field) = explode('.', $foreign);
-					$table->foreign($field)->references($foreign_field)->on($foreign_table);
 
+					if ($builder->hasTable($foreign_table)) {
+						$created_foreigns[] = $table_name.'_'.$field.'_foreign';
+						$table->foreign($field)->references($foreign_field)->on($foreign_table);
+					}
 				}
-
 			});
-
 		}
+
+		$log = new JablesTableModel();
+		$log->setConnection($this->db->getName());
+		$log->type = 'foreign';
+		$log->data = json_encode($created_foreigns);
+		$log->save();
 	}
 
-	public function up($engine = null)
+	public function up(array $table_names = [], $engine = null, $onerror = null)
 	{
 		$creator = function(Blueprint $table, $table_name, $definition, $uniques) use ($engine) {
 			if ($engine) {
@@ -203,10 +212,27 @@ class Runner
 
 		$creator->bindTo($this);
 
+		if (!$table_names) {
+			$table_names = $this->loader->names();
+		}
+
 		$tables = [];
 
-		foreach ($this->loader->names() as $name) {
+		foreach ($table_names as $name) {
 			$definition = $this->loader->get($name);
+
+			if (!$definition) {
+				$msg = "table definition for '$name' doesn't exist.";
+
+				if ($onerror) {
+					$onerror($msg);
+				} else {
+					throw new \Exception($msg);
+				}
+
+				continue;
+			}
+
 			$tables[$name] = $definition;
 			$builder = $this->db->getSchemaBuilder();
 
@@ -222,16 +248,14 @@ class Runner
 				$uniques = (array) $definition->unique;
 			}
 
-			$builder->create($name, function(Blueprint $table) use ($creator, $name, $definition, $uniques){
-
+			$builder->create($name, function(Blueprint $table) use ($creator, $name, $definition, $uniques) {
 				$creator($table, $name, $definition, $uniques);
-
 			});
-
 		}
 
 		$log = new JablesTableModel();
 		$log->setConnection($this->db->getName());
+		$log->type = 'table';
 		$log->data = json_encode($tables);
 		$log->save();
 	}
