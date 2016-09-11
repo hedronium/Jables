@@ -33,8 +33,6 @@ class Check extends Command
 
 		$this->info('--------------------------');
 		$this->info('Looks Fine.');
-		echo PHP_EOL;
-
 		return true;
 	}
 
