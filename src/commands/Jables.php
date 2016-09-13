@@ -6,25 +6,28 @@ use hedronium\Jables\Checker;
 use hedronium\Jables\Loader;
 use hedronium\Jables\Command;
 use hedronium\Jables\DependencyResolver;
+use hedronium\Jables\TagIndexer;
 
 class Jables extends Command
 {
 	use traits\CreatesTable;
 	use traits\Creates;
 
-	protected $signature = 'jables {tables?*} {--database=} {--engine=} {--nodeps}';
+	protected $signature = 'jables {tables?*} {--tag=} {--database=} {--engine=} {--nodeps}';
 	protected $description = 'Creates database tables from jable schema.';
 
 	protected $runner = null;
 	protected $dependency = null;
+	protected $tags = null;
 
-	public function __construct(Runner $runner, Loader $loader, DependencyResolver $dependency)
+	public function __construct(Runner $runner, Loader $loader, DependencyResolver $dependency, TagIndexer $tags)
 	{
 		parent::__construct();
 
 		$this->runner = $runner;
 		$this->loader = $loader;
 		$this->dependency = $dependency;
+		$this->tags = $tags;
 	}
 
 	public function create()
@@ -41,6 +44,18 @@ class Jables extends Command
 		$this->info('Creating Database Tables...');
 
 		$tables = $this->argument('tables') ? $this->argument('tables') : [];
+
+		if ($this->option('tag')) {
+			$tags = explode(',', $this->option('tag'));
+
+			foreach ($tags as $tag) {
+				$tag_tables = $this->tags->get($tag);
+				$tables = array_merge($tables, $tag_tables);
+			}
+		}
+
+		$tables = array_unique($tables);
+
 		$tabs = $tables;
 		foreach ($tabs as $table) {
 			if ($this->loader->exists($table)) {

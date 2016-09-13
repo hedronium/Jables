@@ -29,12 +29,21 @@ class JablesServiceProvider extends ServiceProvider
 			return new DependencyResolver($app, $app['jables.loader']);
 		});
 
+		$this->app->singleton('jables.tag-indexer', function($app){
+			return new TagIndexer($app, $app['jables.loader']);
+		});
+
 		$this->app->singleton('jables.destroyer', function($app){
 			return new Destroyer($app, $app['db']);
 		});
 
 		$this->app['jables.commands.jables'] = $this->app->share(function($app){
-			return new commands\Jables($app['jables.runner'], $app['jables.loader'], $app['jables.dependency-resolver']);
+			return new commands\Jables(
+				$app['jables.runner'],
+				$app['jables.loader'],
+				$app['jables.dependency-resolver'],
+				$app['jables.tag-indexer']
+			);
 		});
 
 		$this->app['jables.commands.check'] = $this->app->share(function($app){
@@ -52,6 +61,10 @@ class JablesServiceProvider extends ServiceProvider
 
 		$this->app['jables.commands.dependencies'] = $this->app->share(function($app){
 			return new commands\Dependencies($app, $app['jables.dependency-resolver']);
+		});
+
+		$this->app['jables.commands.tags'] = $this->app->share(function($app){
+			return new commands\Tags($app, $app['jables.tag-indexer']);
 		});
 
 		$this->app['jables.commands.destroy'] = $this->app->share(function($app){
@@ -87,6 +100,7 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.commands.refresh',
 			'jables.commands.destroy',
 			'jables.commands.dependencies',
+			'jables.commands.tags',
 			'jables.commands.create-table',
 			'jables.commands.create-folder',
 		]);
@@ -99,11 +113,13 @@ class JablesServiceProvider extends ServiceProvider
 			'jables.runner',
 			'jables.checker',
 			'jables.dependency-resolver',
+			'jables.tag-indexer',
 			'jables.destroyer',
 			'jables.commands.jables',
 			'jables.commands.check',
 			'jables.commands.refresh',
 			'jables.commands.dependencies',
+			'jables.commands.tags',
 			'jables.commands.destroy',
 			'jables.commands.diff',
 			'jables.commands.create-table',
