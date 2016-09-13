@@ -21,7 +21,7 @@ class Destroyer
 
 	public function buildLists()
 	{
-		$tables = JablesTableModel::orderBy('id', 'desc')->where('type', '=', 'table')->get();
+		$tables = $this->db->table($this->app['config']['jables.table'])->orderBy('id', 'desc')->where('type', '=', 'table')->get();
 
 		foreach ($tables as $raw) {
 			$defs = json_decode($raw->data);
@@ -31,14 +31,12 @@ class Destroyer
 			}
 		}
 
-		$foreigns = JablesTableModel::orderBy('id', 'desc')->where('type', '=', 'foreign')->get();
+		$foreigns = $this->db->table($this->app['config']['jables.table'])->orderBy('id', 'desc')->where('type', '=', 'foreign')->get();
 
 		foreach ($foreigns as $raw) {
-			$defs = json_decode($raw->data);
+			$tabs = json_decode($raw->data, true);
 
-			foreach ($defs as $def) {
-				$this->foreigns[] = $def;
-			}
+			$this->foreigns = array_merge_recursive($this->foreigns, $tabs);
 		}
 
 		return true;
@@ -66,19 +64,22 @@ class Destroyer
 	{
 		$builder = $this->db->getSchemaBuilder();
 
-		if (!$builder->hasTable(config('jables.table'))) {
+		if (!$builder->hasTable($this->app['config']['jables.table'])) {
 			return false;
 		}
 
 		$this->buildLists();
 
-		foreach ($this->foreigns as $foreign) {
-			list($table_name) = explode('_', $foreign);
+		foreach ($this->foreigns as $table_name => $foreigns) {
+			if (count($foreigns) === 0) {
+				continue;
+			}
 
-			$builder->table($table_name, function(Blueprint $table) use ($table_name, $foreign) {
-				$table->dropForeign($foreign);
+			$builder->table($table_name, function(Blueprint $table) use ($table_name, $foreigns) {
+				foreach ($foreigns as $foreign) {
+					$table->dropForeign($foreign);
+				}
 			});
-
 		}
 
 		foreach ($this->tables as $table) {

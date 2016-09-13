@@ -33,7 +33,7 @@ class Runner
 	{
 		$builder = $this->db->getSchemaBuilder();
 
-		$table = config('jables.table');
+		$table = $this->app['config']['jables.table'];
 
 		if ($builder->hasTable($table)) {
 			return null;
@@ -160,24 +160,27 @@ class Runner
 
 		foreach ($this->foreigns as $table => $foreigns) {
 			$table_name = $table;
+			$created_foreigns[$table] = [];
+
 			$builder->table($table, function($table) use ($foreigns, $table_name, $builder, &$created_foreigns) {
 				foreach ($foreigns as $field => $foreign) {
 
 					list($foreign_table, $foreign_field) = explode('.', $foreign);
 
 					if ($builder->hasTable($foreign_table)) {
-						$created_foreigns[] = $table_name.'_'.$field.'_foreign';
+						$created_foreigns[$table_name][] = $table_name.'_'.$field.'_foreign';
 						$table->foreign($field)->references($foreign_field)->on($foreign_table);
 					}
 				}
 			});
 		}
 
-		$log = new JablesTableModel();
-		$log->setConnection($this->db->getName());
-		$log->type = 'foreign';
-		$log->data = json_encode($created_foreigns);
-		$log->save();
+		$table = $this->app['config']['jables.table'];
+
+		$this->db->table($table)->insert([
+			'type' => 'foreign',
+			'data' => json_encode($created_foreigns)
+		]);
 	}
 
 	public function up(array $table_names = [], $engine = null, $onerror = null)
@@ -248,15 +251,18 @@ class Runner
 				$uniques = (array) $definition->unique;
 			}
 
+			$builder->setConnection($this->db);
+
 			$builder->create($name, function(Blueprint $table) use ($creator, $name, $definition, $uniques) {
 				$creator($table, $name, $definition, $uniques);
 			});
 		}
 
-		$log = new JablesTableModel();
-		$log->setConnection($this->db->getName());
-		$log->type = 'table';
-		$log->data = json_encode($tables);
-		$log->save();
+		$table = $this->app['config']['jables.table'];
+
+		$this->db->table($table)->insert([
+			'type' => 'table',
+			'data' => json_encode($tables)
+		]);
 	}
 }

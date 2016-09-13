@@ -20,6 +20,10 @@ class DependencyResolver
   {
     $definition = $this->loader->get($table);
 
+    if (!$definition) {
+      throw new \Exception("$table definition doesn't exist.");
+    }
+
     $sub_tree = [
       'name' => $table,
       'relations' => []

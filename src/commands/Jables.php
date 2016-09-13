@@ -10,9 +10,6 @@ use hedronium\Jables\TagIndexer;
 
 class Jables extends Command
 {
-	use traits\CreatesTable;
-	use traits\Creates;
-
 	protected $signature = 'jables {tables?*} {--tag=} {--database=} {--engine=} {--nodeps}';
 	protected $description = 'Creates database tables from jable schema.';
 
@@ -30,14 +27,24 @@ class Jables extends Command
 		$this->tags = $tags;
 	}
 
+	public function createTable()
+	{
+		$this->info('Creating Jables Tracker table...');
+
+		if ($this->runner->createTable() === null) {
+			$this->info('Tracker table already exists.');
+			return;
+		}
+
+		$this->info('Tracker table created.');
+	}
+
 	public function create()
 	{
 		$database = $this->option('database');
 		$this->runner->connection($database);
 
-		if ($this->createTable() === false) {
-			return false;
-		}
+		$this->createTable();
 
 		$engine = $this->option('engine');
 

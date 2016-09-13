@@ -8,10 +8,6 @@ use hedronium\Jables\Command;
 
 class Refresh extends Command
 {
-	use traits\Checks;
-	use traits\Destroys;
-	use traits\CreatesTable;
-
 	protected $signature = 'jables:refresh {--database=} {--engine=}';
 	protected $description = 'Removes and re-creates the tables in database.';
 
@@ -32,7 +28,10 @@ class Refresh extends Command
 
 	public function handle()
 	{
-		$this->call('jables:destroy');
+		$this->call('jables:destroy', [
+			'--database' => $this->option('database')
+		]);
+
 		$this->call('jables', [
 			'--engine' => $this->option('engine'),
 			'--database' => $this->option('database')
