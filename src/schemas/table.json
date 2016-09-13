@@ -34,8 +34,24 @@
 			"type": "object",
 			"patternProperties": {
 				"^.*$": {
-					"type": "string",
-					"pattern": "^.*\\..*$"
+					"type": ["string", "object"],
+					"pattern": "^.*\\..*$",
+					"additionalProperties": false,
+					"properties": {
+						"field": {
+							"type": "string",
+							"pattern": "^.*\\..*$"
+						},
+						"onDelete": {
+							"type": "string",
+							"enum": ["restrict", "cascade", "no-action", "null"]
+						},
+						"onUpdate": {
+							"type": "string",
+							"enum": ["restrict", "cascade", "no-action", "null"]
+						}
+					},
+					"required": ["field"]
 				}
 			},
 			"minProperties": 1

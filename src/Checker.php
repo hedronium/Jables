@@ -101,13 +101,14 @@ class Checker
 		foreach ($diff as $property) {
 			$errors[] = [
 				'table' => $table_name,
+				'path' => $this->loader->path($table_name),
 				'property' => "$table_name.fields.$field_name",
 				'message' => "The property - $property - is not defined and the definition does not allow additional properties"
 			];
 		}
 
 		if (count($diff)) {
-			return $errors;
+			throw new SchemaException($errors);
 		}
 
 		return null;
@@ -137,17 +138,16 @@ class Checker
 				foreach ($validator->getErrors() as $error) {
 					$errors[] = [
 						'table' => $table_name,
-						'proterty' => $error['property'],
+						'path' => $this->loader->path($table_name),
+						'property' => "fields.$name.".$error['property'],
 						'message' => $error['message']
 					];
 				}
 
-				return $errors;
+				throw new SchemaException($errors);
 			}
 
-			if ($fieldSchematicLimitErrors = $this->fieldSchematicLimitError($table_name, $name, $field_schema, $field_data)) {
-				return $fieldSchematicLimitErrors;
-			}
+			$this->fieldSchematicLimitError($table_name, $name, $field_schema, $field_data);
 		}
 
 		return null;
@@ -177,9 +177,7 @@ class Checker
 				throw new SchemaException($errors);
 			}
 
-			if ($field_errors = $this->fieldSchematicError($table_name, $table_data)) {
-				return $field_errors;
-			}
+			$this->fieldSchematicError($table_name, $table_data);
 		}
 
 		return null;

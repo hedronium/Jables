@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	
+
 	"type": "object",
 	"properties": {
 		"type": {
@@ -10,7 +10,7 @@
 			"type": "string"
 		},
 		"description": {
-			"type": "integer"
+			"type": "string"
 		},
 		"primary": {
 			"type": "boolean"

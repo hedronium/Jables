@@ -23,7 +23,7 @@ class Check extends Command
 	public function check()
 	{
 		$this->info('Checking for Schema Errors...');
-		$this->checker->schemaError();
+		dump($this->checker->schemaError());
 
 		$this->info('Checking for Foreign key Constraint Errors...');
 		$this->checker->foreignKeyError();
